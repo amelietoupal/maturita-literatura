@@ -42,7 +42,6 @@ button{font:inherit;color:inherit}
 .legend span{display:inline-flex;align-items:center;gap:8px}
 .sw{display:inline-block;width:28px;height:14px;border-radius:3px}
 .sw.hl{background:linear-gradient(transparent 40%,var(--hl) 40%)}
-.sw.mine{background:var(--mine);border:1px solid var(--mine-line)}
 
 /* timeline ribbon */
 .ribbon{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;margin:22px 0 4px}
@@ -81,19 +80,14 @@ main{max-width:1100px;margin:0 auto;padding:0 20px 120px}
 .grp small{font-weight:400;color:var(--muted)}
 
 .au{display:grid;grid-template-columns:230px 1fr;gap:6px 24px;padding:14px 0 14px 12px;border-bottom:1px dashed var(--rule);border-left:4px solid transparent;margin-left:-16px}
-.au.has-mine{border-left-color:var(--mine-line);background:linear-gradient(90deg,var(--mine) 0,transparent 260px)}
 .au .nm{font-weight:700;font-size:18px;line-height:1.25;font-variant:small-caps;letter-spacing:.01em}
 .au .dt{font-family:var(--sans);font-size:13px;color:var(--muted)}
-.au .badge{display:none;margin-top:6px;font-family:var(--sans);font-size:12px;font-weight:600;color:var(--mine-ink)}
-.au.has-mine .badge{display:inline-block}
 .au .tx{margin:0 0 8px;max-width:72ch}
 .works{display:flex;flex-wrap:wrap;gap:6px}
-.w{border:1px solid var(--rule);background:var(--card);border-radius:5px;padding:4px 10px 4px 8px;font-family:var(--serif);font-size:15px;font-style:italic;cursor:pointer;display:inline-flex;gap:6px;align-items:center;text-align:left;line-height:1.3}
+.w{border:1px solid var(--rule);background:var(--card);border-radius:5px;padding:4px 10px 4px 8px;font-family:var(--serif);font-size:15px;font-style:italic;display:inline-flex;gap:6px;align-items:center;text-align:left;line-height:1.3}
 .w .k{font-style:normal;font-family:var(--sans);font-size:10.5px;color:var(--muted);border:1px solid var(--rule);border-radius:3px;padding:0 4px}
 .w.key{background:linear-gradient(transparent 58%,var(--hl-soft) 58%),var(--card);font-weight:600}
 .w .st{font-style:normal;opacity:.35}
-.w.mine{background:var(--mine);border-color:var(--mine-line);color:var(--ink)}
-.w.mine .st{opacity:1;color:var(--mine-ink)}
 .w:focus-visible,.seg button:focus-visible,.fab:focus-visible{outline:3px solid #3B82F6;outline-offset:2px}
 @media (max-width:700px){
   .au{grid-template-columns:1fr;margin-left:-12px}
@@ -172,8 +166,6 @@ main{max-width:1100px;margin:0 auto;padding:0 20px 120px}
 .pov .ghost{border:1px solid var(--rule);background:var(--card);border-radius:999px;padding:12px 15px;cursor:pointer;font-size:15px}
 
 /* modes */
-body.only-mine .au:not(.has-mine){display:none}
-body.only-mine .era.no-mine{display:none}
 body.quiz .au .tx, body.quiz .au .works, body.quiz .au .mynote{filter:blur(6px);transition:filter .2s}
 body.quiz .au.reveal .tx, body.quiz .au.reveal .works{filter:none}
 body.quiz .au{cursor:pointer}
@@ -261,7 +253,6 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
 <header class="hero">
   <h1>Literární historie<br>k maturitě</h1>
   <p>Všechno, co katalog CERMAT (část C) vyžaduje z literární historie: epochy, směry, skupiny, všichni autoři ze seznamu a jejich klíčová díla. Seřazeno chronologicky, jak se to vyvíjelo.</p>
-  <p>Díla z tvého školního seznamu jsou v přehledu zvýrazněná zeleně.</p>
   <section class="cetba" aria-labelledby="cetbaH">
     <div class="cetba-top">
       <div>
@@ -276,7 +267,6 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
   </section>
   <div class="legend">
     <span><i class="sw hl"></i> nejdůležitější – v testech se objevuje nejčastěji</span>
-    <span><i class="sw mine"></i> dílo z mého maturitního seznamu</span>
   </div>
   <div class="pbar"><span id="pTxt">Umím 0 autorů</span><div class="tr"><div class="fl" id="pFill"></div></div></div>
   <nav class="ribbon" id="ribbon" aria-label="Časová osa epoch"></nav>
@@ -286,7 +276,6 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
   <div class="bar-in">
     <div class="seg" role="group" aria-label="Režim zobrazení">
       <button id="mAll" aria-pressed="true">Vše</button>
-      <button id="mMine" aria-pressed="false">Jen můj seznam</button>
       <button id="mQuiz" aria-pressed="false">Zkoušení</button>
     </div>
     <button class="pbtn" id="practice">Procvičovat</button>
@@ -304,28 +293,14 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
 </footer>
 
 <div class="pov" id="pov" role="dialog" aria-modal="true" aria-label="Procvičování"><div class="in" id="povIn"></div></div>
-<button class="fab" id="fab" aria-haspopup="dialog">Seznam <b id="fabN">0</b> &nbsp;Poznámky <b id="fabNotes">0</b></button>
+<button class="fab" id="fab" aria-haspopup="dialog">Poznámky <b id="fabNotes">0</b></button>
 
 <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
   <div class="scrim" data-close></div>
   <div class="panel">
     <button class="close" data-close aria-label="Zavřít">×</button>
-    <h2 id="dTitle">Moje maturita</h2>
-    <div class="tabs" role="tablist">
-      <button role="tab" id="tList" aria-selected="true">Seznam četby</button>
-      <button role="tab" id="tNotes" aria-selected="false">Poznámky</button>
-    </div>
-    <div id="pList">
-    <div class="note">Kontrola podle původních kritérií katalogu (20 děl). Od 2020/2021 je stanovuje škola – většina je převzala, ale ověř si to.</div>
-    <ul class="chk" id="chk"></ul>
-    <div class="mylist" id="mylist"></div>
-    <div class="actions">
-      <button id="copy">Kopírovat seznam</button>
-      <button id="clear">Vymazat výběr</button>
-    </div>
-    <p class="note" id="copied" hidden>Zkopírováno.</p>
-    </div>
-    <div id="pNotes" hidden>
+    <h2 id="dTitle">Moje poznámky</h2>
+    <div id="pNotes">
       <p class="note">Poznámky se ukládají jen v tomhle prohlížeči na tomhle zařízení. Občas si stáhni zálohu – když soubor otevřeš jinde nebo smažeš data prohlížeče, nahraješ ji zpět.</p>
       <div class="actions">
         <button id="bExport">Stáhnout zálohu</button>
@@ -608,16 +583,10 @@ const PAIRS=[
 ];
 
 /* ===================== STATE ===================== */
-let mine=new Set();
-const KEY="lit-hist-mine-v1", NKEY="lit-hist-notes-v1";
+const NKEY="lit-hist-notes-v1";
 let notes={};
 try{const n=localStorage.getItem(NKEY);if(n)notes=JSON.parse(n)||{};}catch(e){}
 function saveNotes(){try{localStorage.setItem(NKEY,JSON.stringify(notes));return true;}catch(e){return false;}}
-// školní seznam (MZ jaro 2027) – předvyplněno, dokud si výběr sama nezměníš
-const SCHOOL_LIST=["Molière|Lakomec","Molière|Zdravý nemocný","Nikolaj Vasiljevič Gogol|Revizor","Karel Havlíček Borovský|Tyrolské elegie","Karel Hynek Mácha|Máj","George Orwell|1984","George Orwell|Farma zvířat","Karel Čapek|R.U.R.","Karel Čapek|Válka s mloky","Franz Kafka|Proměna","Zdeněk Svěrák – Ladislav Smoljak|Dobytí severního pólu"];
-mine=new Set(SCHOOL_LIST);
-try{const s=localStorage.getItem(KEY);if(s)mine=new Set(JSON.parse(s));}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify([...mine]));}catch(e){}}
 
 const md=s=>s.replace(/\*\*(.+?)\*\*/g,"<mark>$1</mark>");
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
@@ -639,10 +608,9 @@ ERAS.forEach(e=>{
   e.au.forEach(a=>{
     if(a.g) html+=`<div class="grp">${a.g}${a.gn?`<small>${a.gn}</small>`:""}</div>`;
     html+=`<article class="au" data-nk="au:${esc(a.n)}" data-au="${esc(a.n)}" data-s="${esc((a.n+" "+a.t+" "+a.w.map(w=>w[0]).join(" ")).toLowerCase())}">
-      <div><div class="nm">${a.n}</div><div class="dt">${a.d}</div><span class="badge">★ v mém seznamu</span><br><button class="kbtn">✓ Umím</button><button class="nbtn">✎ Poznámka</button></div>
+      <div><div class="nm">${a.n}</div><div class="dt">${a.d}</div><br><button class="kbtn">✓ Umím</button><button class="nbtn">✎ Poznámka</button></div>
       <div><p class="tx">${md(a.t)}</p><div class="works">${a.w.map(w=>{
-        const id=a.n+"|"+w[0];
-        return `<button class="w${w[3]?" key":""}" data-id="${esc(id)}" aria-pressed="false"><span class="st">★</span>${w[0]}<span class="k">${DRUH[w[1]]}</span></button>`;
+        return `<span class="w${w[3]?" key":""}">${w[0]}<span class="k">${DRUH[w[1]]}</span></span>`;
       }).join("")}</div><div class="mynote"></div></div></article>`;
   });
   html+=`</section>`;
@@ -697,39 +665,6 @@ main.innerHTML=html;
 
 document.getElementById("jump").innerHTML=ERAS.map(e=>`<a href="#${e.id}" data-era="${e.id}">${e.name}<span class="dot" hidden></span></a>`).join("")+`<a href="#zanry">Žánry</a><a href="#teorie">Teorie</a><a href="#plete">Pozor, plete se</a>`;
 
-/* ===================== UPDATE ===================== */
-function update(){
-  document.querySelectorAll(".w").forEach(b=>{const on=mine.has(b.dataset.id);b.classList.toggle("mine",on);b.setAttribute("aria-pressed",on)});
-  document.querySelectorAll(".au").forEach(a=>a.classList.toggle("has-mine",!!a.querySelector(".w.mine")));
-  ERAS.forEach(e=>{
-    const sec=document.getElementById(e.id);const n=sec.querySelectorAll(".w.mine").length;
-    sec.classList.toggle("no-mine",n===0);
-    const dot=document.querySelector(`.jump a[data-era="${e.id}"] .dot`);dot.hidden=!n;dot.textContent=n;
-  });
-  document.querySelectorAll("#zanry,#plete,#teorie").forEach(s=>s.classList.add("no-mine"));
-  document.getElementById("fabN").textContent=mine.size+"/20";
-  renderDrawer();
-}
-
-function renderDrawer(){
-  const L=[...mine].map(id=>BYID[id]).filter(Boolean);
-  const cnt=k=>L.filter(x=>x.cat===k).length, dr=k=>L.filter(x=>x.dr===k).length;
-  const per={};L.forEach(x=>per[x.au]=(per[x.au]||0)+1);
-  const over=Object.entries(per).filter(([,n])=>n>2);
-  const row=(label,val,ok)=>`<li><span>${label}</span><span class="${ok?"y":"n"}">${val} ${ok?"✓":"✗"}</span></li>`;
-  let h=row("Celkem děl (přesně 20)",L.length,L.length===20);
-  Object.keys(CATS).forEach(k=>h+=row(`${CATS[k]} (min. ${MIN[k]})`,cnt(k),cnt(k)>=MIN[k]));
-  ["p","po","d"].forEach(k=>h+=row(`${DRUH[k][0].toUpperCase()+DRUH[k].slice(1)} (min. 2)`,dr(k),dr(k)>=2));
-  h+=row("Max. 2 díla od jednoho autora",over.length?over.map(o=>o[0]).join(", "):"OK",!over.length);
-  document.getElementById("chk").innerHTML=h;
-  let m="";
-  if(!L.length) m=`<p class="note">Zatím nic. Zavři panel a ťukni na díla, která máš v seznamu.</p>`;
-  Object.keys(CATS).forEach(k=>{
-    const g=L.filter(x=>x.cat===k);if(!g.length)return;
-    m+=`<h3>${CATS[k]}</h3><ol>${g.map(x=>`<li>${x.au}: <i>${x.t}</i> <span class="note">(${DRUH[x.dr]})</span> <button class="x" data-rm="${esc(x.id)}" aria-label="Odebrat">odebrat</button></li>`).join("")}</ol>`;
-  });
-  document.getElementById("mylist").innerHTML=m;
-}
 
 /* ===================== EVENTS ===================== */
 main.addEventListener("click",ev=>{
@@ -738,19 +673,12 @@ main.addEventListener("click",ev=>{
   if(kb){const n=kb.closest(".au").dataset.au;known.has(n)?known.delete(n):known.add(n);saveKnown();renderKnown();return;}
   const nb=ev.target.closest(".nbtn");
   if(nb){openEditor(nb.closest("[data-nk]"));return;}
-  const b=ev.target.closest(".w");
-  if(b&&!(document.body.classList.contains("quiz")&&!b.closest(".au").classList.contains("reveal"))){
-    const id=b.dataset.id; mine.has(id)?mine.delete(id):mine.add(id); save(); update(); return;
-  }
   const a=ev.target.closest(".au");
   if(a&&document.body.classList.contains("quiz")&&!a.classList.contains("editing")) a.classList.toggle("reveal");
 });
-document.getElementById("mylist").addEventListener("click",ev=>{
-  const r=ev.target.closest("[data-rm]");if(r){mine.delete(r.dataset.rm);save();update();}
-});
-const modes={mAll:"",mMine:"only-mine",mQuiz:"quiz"};
+const modes={mAll:"",mQuiz:"quiz"};
 Object.keys(modes).forEach(id=>document.getElementById(id).addEventListener("click",()=>{
-  document.body.classList.remove("only-mine","quiz");
+  document.body.classList.remove("quiz");
   if(modes[id])document.body.classList.add(modes[id]);
   Object.keys(modes).forEach(k=>document.getElementById(k).setAttribute("aria-pressed",k===id));
   document.querySelectorAll(".au.reveal").forEach(a=>a.classList.remove("reveal"));
@@ -789,14 +717,6 @@ const dr=document.getElementById("drawer");
 document.getElementById("fab").addEventListener("click",()=>{dr.classList.add("open");dr.querySelector(".close").focus()});
 dr.addEventListener("click",ev=>{if(ev.target.closest("[data-close]"))dr.classList.remove("open")});
 document.addEventListener("keydown",ev=>{if(ev.key==="Escape")dr.classList.remove("open")});
-document.getElementById("clear").addEventListener("click",()=>{if(confirm("Opravdu vymazat celý výběr?")){mine.clear();save();update();}});
-document.getElementById("copy").addEventListener("click",()=>{
-  const L=[...mine].map(id=>BYID[id]).filter(Boolean);
-  const txt=Object.keys(CATS).map(k=>{const g=L.filter(x=>x.cat===k);return g.length?CATS[k]+"\n"+g.map((x,i)=>`${i+1}. ${x.au}: ${x.t} (${DRUH[x.dr]})`).join("\n"):""}).filter(Boolean).join("\n\n");
-  const done=()=>{const c=document.getElementById("copied");c.hidden=false;setTimeout(()=>c.hidden=true,1800)};
-  if(navigator.clipboard)navigator.clipboard.writeText(txt).then(done,()=>prompt("Zkopíruj:",txt));else prompt("Zkopíruj:",txt);
-});
-update();
 
 /* ===================== NOTES ===================== */
 const ERA_NAME=Object.fromEntries(ERAS.map(e=>[e.id,e.name]));
@@ -854,7 +774,7 @@ function download(name,text,type){
 function msg(t){const m=document.getElementById("nMsg");m.textContent=t;m.hidden=false;setTimeout(()=>m.hidden=true,3000)}
 const today=()=>new Date().toISOString().slice(0,10);
 document.getElementById("bExport").addEventListener("click",()=>{
-  download(`maturita-literatura-zaloha-${today()}.json`,JSON.stringify({app:"lit-hist",v:2,mine:[...mine],notes,known:[...known]},null,1),"application/json");
+  download(`maturita-literatura-zaloha-${today()}.json`,JSON.stringify({app:"lit-hist",v:3,notes,known:[...known]},null,1),"application/json");
 });
 document.getElementById("bTxt").addEventListener("click",()=>{
   let t="MOJE POZNÁMKY – LITERÁRNÍ HISTORIE\n";
@@ -869,8 +789,8 @@ fi.addEventListener("change",()=>{
   f.text().then(t=>{
     const d=JSON.parse(t);if(d.app!=="lit-hist")throw 0;
     const n=Object.keys(d.notes||{}).length;
-    if(!confirm(`Záloha obsahuje ${n} poznámek a ${(d.mine||[]).length} děl ze seznamu. Nahradit tím současná data?`))return;
-    notes=d.notes||{};mine=new Set(d.mine||[]);known=new Set(d.known||[]);saveNotes();save();saveKnown();update();renderNotes();renderKnown();msg("Záloha nahrána.");
+    if(!confirm(`Záloha obsahuje ${n} poznámek. Nahradit tím současná data?`))return;
+    notes=d.notes||{};known=new Set(d.known||[]);saveNotes();saveKnown();renderNotes();renderKnown();msg("Záloha nahrána.");
   }).catch(()=>msg("Tohle není záloha z tohoto souboru.")).finally(()=>fi.value="");
 });
 document.getElementById("nlist").addEventListener("click",ev=>{
@@ -879,10 +799,6 @@ document.getElementById("nlist").addEventListener("click",ev=>{
   const el=document.querySelector(`[data-nk="${CSS.escape(g.dataset.goto)}"]`);
   if(el){el.classList.remove("hide");el.scrollIntoView({block:"center"});}
 });
-const tabs={tList:"pList",tNotes:"pNotes"};
-Object.keys(tabs).forEach(t=>document.getElementById(t).addEventListener("click",()=>{
-  Object.keys(tabs).forEach(k=>{document.getElementById(k).setAttribute("aria-selected",k===t);document.getElementById(tabs[k]).hidden=k!==t;});
-}));
 renderNotes();
 
 /* ===================== KNOWN ===================== */
@@ -947,8 +863,7 @@ function qGenre(){
 }
 function genRound(scope,n=10){
   let aus=AUS;
-  if(scope==="mine")aus=AUS.filter(a=>a.w.some(w=>mine.has(a.n+"|"+w[0])));
-  else if(scope==="unknown")aus=AUS.filter(a=>!known.has(a.n));
+  if(scope==="unknown")aus=AUS.filter(a=>!known.has(a.n));
   else if(ERA_NAME[scope])aus=AUS.filter(a=>a.era===scope);
   const out=[],seen=new Set();
   for(let t=0;out.length<n&&t<400;t++){
@@ -976,13 +891,11 @@ const pov=document.getElementById("pov"),povIn=document.getElementById("povIn");
 let R=null;
 function povTop(t){return `<div class="top"><h2>${t}</h2><button class="x" data-pclose aria-label="Zavřít">×</button></div>`}
 function setup(){
-  const mineN=AUS.filter(a=>a.w.some(w=>mine.has(a.n+"|"+w[0]))).length;
   povIn.innerHTML=povTop("Procvičování")+`
   <p class="note" style="font-family:var(--sans)">Otázky ve stylu didaktického testu. Každé kolo má 10 otázek.</p>
   <label for="pScope">Z čeho</label>
   <select id="pScope">
     <option value="all">Všechno (autoři, díla, směry, figury)</option>
-    <option value="mine"${mineN?"":" disabled"}>Jen autoři z mého seznamu${mineN?` (${mineN})`:" – zatím nic nevybráno"}</option>
     <option value="unknown">Jen autoři, které ještě neumím</option>
     <option value="smery">Literární směry podle popisu</option>
     <option value="teorie">Tropy, figury a žánry</option>

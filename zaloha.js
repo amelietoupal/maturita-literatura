@@ -2,13 +2,13 @@
 (function(){
   const KEYS=[
     "lit-hist-notes-v1","lit-hist-lvl-v1","lit-hist-hl-v1","lit-hist-text-v1","lit-hist-known-v1",
-    "rozbory-kniha-v1","rozbory-hl-v1","rozbory-poznamky-v1","rozbory-text-v1"
+    "rozbory-kniha-v1","rozbory-hl-v1","rozbory-poznamky-v1","rozbory-poznamky-autor-v1","rozbory-text-v1"
   ];
   const today=()=>new Date().toISOString().slice(0,10);
   function collect(){const data={};KEYS.forEach(k=>{try{const v=localStorage.getItem(k);if(v!==null)data[k]=JSON.parse(v);}catch(e){}});return data;}
   function count(data){
     const n=k=>{const v=data[k];return v?(Array.isArray(v)?v.length:Object.keys(v).length):0;};
-    return {poznamky:n("lit-hist-notes-v1")+n("rozbory-poznamky-v1"),zvyrazneni:n("lit-hist-hl-v1")+n("rozbory-hl-v1"),upravy:n("lit-hist-text-v1")+n("rozbory-text-v1"),oznaceni:n("lit-hist-lvl-v1")+n("rozbory-kniha-v1")};
+    return {poznamky:n("lit-hist-notes-v1")+n("rozbory-poznamky-v1")+n("rozbory-poznamky-autor-v1"),zvyrazneni:n("lit-hist-hl-v1")+n("rozbory-hl-v1"),upravy:n("lit-hist-text-v1")+n("rozbory-text-v1"),oznaceni:n("lit-hist-lvl-v1")+n("rozbory-kniha-v1")};
   }
   window.Zaloha={
     stats(){return count(collect());},

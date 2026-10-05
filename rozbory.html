@@ -237,7 +237,7 @@ function render(r){
   <summary><span class="no">${r.no}.</span><span class="ttl">${esc(r.t)}<small>${esc(r.au)} · ${esc(r.rok)}${r.orig?` · orig. <i>${esc(r.orig)}</i>`:""}</small></span><span class="chev" aria-hidden="true">›</span><span class="lv" role="group" aria-label="Jak umím tuto knihu"><button data-v="ok" aria-pressed="false">✓ umím</button><button data-v="mid" aria-pressed="false">~ napůl</button><button data-v="no" aria-pressed="false">✗ neumím</button><span class="hlcount"></span><span class="hlcount ncount"></span></span></summary>
   <div class="body">
   ${r.over?`<div class="warn">⚠ ${md(r.over)}</div>`:""}
-  <div class="bnote"><b>✎ Moje poznámky ke knize</b><textarea data-bn="${r.no}" placeholder="Tvoje poznámky – co říct u zkoušky, citáty, vlastní postřehy z četby, co si zopakovat…"></textarea><div class="nst"></div><div class="pr"></div></div>
+  <div class="bnote"><b>📖 Moje poznámky k dílu <i>${esc(r.t)}</i></b><textarea data-bn="${r.no}" placeholder="Poznámky k tomuto dílu – děj, postavy, motivy, citáty, co říct u zkoušky…"></textarea><div class="nst"></div><div class="pr"></div></div>
   ${sec(1,"Kompoziční rovina literárního díla",`<div class="tw"><table><tbody>
     ${row("Literární forma",r.forma)}${row("Literární druh",r.druh)}${row("Literární žánr",r.zanr)}
     ${row("Struktura díla (složení / dělení)",r.struktura)}${row("Vyprávěcí postup",r.postup)}</tbody></table></div>`)}
@@ -252,6 +252,7 @@ function render(r){
     <tr><td><b>Typy promluv:</b><br>${md(r.promluvy[0])}</td><td>${md(r.promluvy[1])}</td></tr>
     <tr><td><b>Veršová výstavba</b> (jen u poezie)</td><td>${r.vers?md(r.vers):"✗ (není poezie)"}</td></tr></tbody></table></div>`)}
   ${sec(8,"Literárně-historický kontext díla a autora",`<h4>A – Autor</h4><div class="tw"><table><thead><tr><th style="width:50%">Život autora</th><th>Znaky jeho psaní / tvorby</th></tr></thead><tbody><tr><td>${list(r.autor.zivot)}</td><td>${list(r.autor.znaky)}</td></tr></tbody></table></div>
+    <div class="bnote anote"><b>👤 Moje poznámky k autorovi – ${esc(r.au.split(" (")[0])}</b><textarea data-an="${esc(r.au.split(" (")[0])}" placeholder="Poznámky k autorovi – život, směr, styl, další díla…"></textarea><div class="nst"></div><div class="pr"></div></div>
     <h4>B – Další díla autora</h4>${pairs("Dílo","Informace k dílu",r.dalsi)}
     <h4>C – Směr / skupina</h4><div class="tw"><table><tbody>${row(md(r.smer[0]).replace(/<\/?mark>/g,""),r.smer[1])}</tbody></table></div>
     <h4>D – Významní autoři směru / doby</h4>${pairs("Autor","Informace o díle a životě",r.autori)}`)}
@@ -399,11 +400,22 @@ const NKEY="rozbory-poznamky-v1";
 let bnotes=load(NKEY),bnT;
 function paintNote(b){
   const no=b.id.slice(1),t=bnotes[no]||"",box=b.querySelector(".bnote");
-  b.querySelector(".ncount").textContent=t?"✎ poznámka":"";
+  b.querySelector(".ncount").textContent=t?"📖 poznámka k dílu":"";
   box.classList.toggle("empty",!t);box.querySelector(".pr").textContent=t;
 }
 books.forEach(b=>{b.querySelector("[data-bn]").value=bnotes[b.id.slice(1)]||"";paintNote(b);});
+/* poznámky k autorovi – oddělené od poznámek k dílu (u Moliéra, Orwella, Čapka… sdílené mezi jeho díly) */
+const AKEY="rozbory-poznamky-autor-v1";let anotes=load(AKEY),anT;
+function paintAuthor(ta){const t=anotes[ta.dataset.an]||"",box=ta.closest(".bnote");box.classList.toggle("empty",!t);box.querySelector(".pr").textContent=t;}
+main.querySelectorAll("[data-an]").forEach(ta=>{ta.value=anotes[ta.dataset.an]||"";paintAuthor(ta);});
 main.addEventListener("input",e=>{
+  const at=e.target.closest("[data-an]");
+  if(at){clearTimeout(anT);anT=setTimeout(()=>{
+    if(at.value.trim())anotes[at.dataset.an]=at.value;else delete anotes[at.dataset.an];
+    let ok=true;try{localStorage.setItem(AKEY,JSON.stringify(anotes));}catch(x){ok=false;}
+    at.nextElementSibling.textContent=ok?"Uloženo"+(main.querySelectorAll(`[data-an="${CSS.escape(at.dataset.an)}"]`).length>1?" (platí pro všechna díla tohoto autora)":""):"Prohlížeč nepovolil ukládání";
+    main.querySelectorAll(`[data-an="${CSS.escape(at.dataset.an)}"]`).forEach(x=>{if(x!==at)x.value=at.value;paintAuthor(x);});
+  },400);return;}
   const ta=e.target.closest("[data-bn]");if(!ta)return;
   clearTimeout(bnT);bnT=setTimeout(()=>{
     if(ta.value.trim())bnotes[ta.dataset.bn]=ta.value;else delete bnotes[ta.dataset.bn];
@@ -511,7 +523,7 @@ const norm=t=>(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 let qT;
 document.getElementById("q").addEventListener("input",e=>{clearTimeout(qT);qT=setTimeout(()=>{
   const q=norm(e.target.value.trim());
-  books.forEach(b=>b.classList.toggle("hide",!(!q||b.dataset.text.includes(q)||norm(b.textContent).includes(q)||norm(bnotes[b.id.slice(1)]).includes(q))));
+  books.forEach(b=>b.classList.toggle("hide",!(!q||b.dataset.text.includes(q)||norm(b.textContent).includes(q)||norm(bnotes[b.id.slice(1)]).includes(q)||norm(anotes[b.querySelector("[data-an]").dataset.an]).includes(q))));
   updateCats();
 },120);});
 </script>

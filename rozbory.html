@@ -129,6 +129,28 @@ details.book.lv-no{border-left-color:var(--no)}
 .bnote .pr{display:none;white-space:pre-wrap}
 @media print{.bnote textarea,.bnote .nst{display:none}.bnote .pr{display:block}.bnote.empty{display:none}}
 @media print{.lv,.prog,.flt,.hlbar,.hlclear{display:none!important}.uhl{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+/* procvičování četby */
+.cv{position:fixed;inset:0;z-index:80;background:var(--paper);overflow-y:auto;display:none;font-family:var(--sans)}
+.cv.open{display:block}
+.cv .in{max-width:640px;margin:0 auto;padding:24px 16px 60px}
+.cv .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cv h2{font-family:var(--serif);font-size:26px;margin:0}
+.cv .x{border:1px solid var(--rule);background:var(--card);border-radius:50%;width:40px;height:40px;font-size:20px;cursor:pointer}
+.cv label{display:block;font-weight:600;font-size:14px;margin:14px 0 4px}
+.cv select{width:100%;padding:10px;border:1px solid var(--rule);border-radius:10px;background:var(--card);color:var(--ink);font-size:16px}
+.cv .go{display:block;width:100%;margin-top:18px;border:0;border-radius:999px;background:var(--ink);color:var(--paper);padding:14px;font-size:16px;font-weight:600;cursor:pointer}
+.cv .meta{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.cv .tr{flex:1;height:6px;background:var(--rule);border-radius:3px;overflow:hidden}.cv .tr div{height:100%;background:var(--ok)}
+.cv .q{font-family:var(--serif);font-size:21px;line-height:1.35;margin:18px 0 14px}
+.cv .opt{display:block;width:100%;text-align:left;margin:8px 0;padding:13px 15px;border:1px solid var(--rule);border-radius:12px;background:var(--card);color:var(--ink);font-size:16px;font-family:var(--serif);cursor:pointer}
+.cv .opt.ok{background:color-mix(in srgb,var(--ok) 18%,var(--card));border-color:var(--ok)}
+.cv .opt.bad{background:color-mix(in srgb,var(--no) 15%,var(--card));border-color:var(--no)}
+.cv .fb{margin-top:12px;padding:12px 14px;border:1px solid var(--rule);border-radius:12px;background:var(--card);font-size:14.5px}
+.cv .score{font-family:var(--serif);font-size:48px;font-weight:800;margin:10px 0 0}
+.cv .mist div{border-top:1px solid var(--rule);padding:8px 0;font-size:14px}
+.cv .note{color:var(--muted);font-size:13.5px}
+.zal{max-width:1100px;margin:0 auto 24px;padding:16px;font-family:var(--sans);font-size:14px}
+.zal h2{font-size:18px;margin:0 0 4px}.zal p{color:var(--muted);margin:0 0 10px;max-width:70ch}
 footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans);font-size:13px;color:var(--muted)}
 
 @media (max-width:640px){
@@ -153,6 +175,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
   <h1>Rozbory mých<br>maturitních děl</h1>
   <p>Všech 20 děl ze seznamu k MZ (jaro 2027), zpracovaných podle listu <b>ANALÝZA literárního díla – ZPRACOVÁNÍ</b>: kompoziční rovina, čas a prostor, témata a děj, postavy a vypravěč, ukázka v kontextu, jazyk a literárně-historický kontext.</p>
   <p><b>U každé knihy si označ, jak ji umíš</b> – ✓ umím, ~ napůl, ✗ neumím. <b>Zvýrazňovač:</b> označ v textu slova (tažením prstem nebo myší) a vyber barvu dole; na zvýraznění klepni, když ho chceš odebrat. Vše se ukládá v tomhle prohlížeči na tomhle zařízení.</p>
+  <p><b>Procvičovat četbu:</b> otázky z tvých rozborů (autor, druh, žánr, vypravěč, místo děje, směr, postavy) – celé téma nebo rychlé kolo. Úplně dole je <b>záloha</b> všech tvých dat.</p>
   <p><b>Psaní do textu:</b> tlačítkem <b>✎ Psát do textu</b> můžeš v rozboru cokoli dopsat, smazat nebo přepsat. Původní text odstavce jde kdykoli vrátit.</p>
   <p>Zvýrazněné pojmy jsou to, co u ústní zkoušky nejvíc chtějí slyšet. Body 5 a 7 se u zkoušky vztahují ke konkrétní ukázce – tady najdeš pasáže, které se jako ukázky dávají nejčastěji, a co v nich obvykle převládá.</p>
 </header>
@@ -169,6 +192,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
     <button class="btn" id="openAll">Rozbalit vše</button>
     <button class="btn" id="closeAll">Sbalit vše</button>
     <button class="btn" id="print">Tisk / PDF</button>
+    <button class="btn" id="cvicBtn" style="background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:600">Procvičovat četbu</button>
     <button class="btn" id="psaniBtn" aria-pressed="false" style="border-color:#7C3AED;color:#7C3AED;font-weight:600">✎ Psát do textu</button>
     <nav class="jump" id="jump" aria-label="Přejít na dílo"></nav>
   </div>
@@ -176,7 +200,16 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
 
 <main id="main"></main>
 
+<div class="cv" id="cv" role="dialog" aria-modal="true" aria-label="Procvičování četby"><div class="in" id="cvIn"></div></div>
 <div class="hlbar" id="hlbar" hidden role="toolbar" aria-label="Zvýrazňovač"></div>
+
+<section class="zal noprint" aria-labelledby="zalH">
+  <h2 id="zalH">Záloha</h2>
+  <p>Označení, zvýraznění, poznámky a úpravy textu se ukládají jen v tomhle prohlížeči. Záloha obsahuje všechno z rozborů i z literární historie – stáhni si ji občas, ať o nic nepřijdeš (a ať to můžeš přenést na jiné zařízení).</p>
+  <button class="btn" id="zExp">Stáhnout zálohu</button> <button class="btn" id="zImp">Nahrát zálohu</button>
+  <input type="file" id="zFile" accept=".json,application/json" hidden>
+  <span id="zMsg" class="tip"></span>
+</section>
 
 <footer>
   Rozbory slouží jako podklad k učení – pro ústní zkoušku je potřeba mít dílo přečtené a umět vše doložit vlastními slovy. U děl s upozorněním si doplň konkrétní scény z vlastní četby.
@@ -184,6 +217,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
 
 <script src="rozbory-data.js"></script>
 <script src="psani.js"></script>
+<script src="zaloha.js"></script>
 <script>
 const CATS={A:"Literatura do konce 18. století",B:"Literatura 19. století",C:"Světová literatura 20. a 21. století",D:"Česká literatura 20. a 21. století"};
 const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -203,7 +237,7 @@ function render(r){
   <summary><span class="no">${r.no}.</span><span class="ttl">${esc(r.t)}<small>${esc(r.au)} · ${esc(r.rok)}${r.orig?` · orig. <i>${esc(r.orig)}</i>`:""}</small></span><span class="chev" aria-hidden="true">›</span><span class="lv" role="group" aria-label="Jak umím tuto knihu"><button data-v="ok" aria-pressed="false">✓ umím</button><button data-v="mid" aria-pressed="false">~ napůl</button><button data-v="no" aria-pressed="false">✗ neumím</button><span class="hlcount"></span><span class="hlcount ncount"></span></span></summary>
   <div class="body">
   ${r.over?`<div class="warn">⚠ ${md(r.over)}</div>`:""}
-  <div class="bnote"><b>✎ Moje poznámky ke knize</b><textarea data-bn="${r.no}" placeholder="Tvoje poznámky – co říct u zkoušky, citáty, vlastní postřehy z četby, co si zopakovat…"></textarea><div class="nst"></div><div class="pr"></div></div>
+  <div class="bnote"><b>📖 Moje poznámky k dílu <i>${esc(r.t)}</i></b><textarea data-bn="${r.no}" placeholder="Poznámky k tomuto dílu – děj, postavy, motivy, citáty, co říct u zkoušky…"></textarea><div class="nst"></div><div class="pr"></div></div>
   ${sec(1,"Kompoziční rovina literárního díla",`<div class="tw"><table><tbody>
     ${row("Literární forma",r.forma)}${row("Literární druh",r.druh)}${row("Literární žánr",r.zanr)}
     ${row("Struktura díla (složení / dělení)",r.struktura)}${row("Vyprávěcí postup",r.postup)}</tbody></table></div>`)}
@@ -218,6 +252,7 @@ function render(r){
     <tr><td><b>Typy promluv:</b><br>${md(r.promluvy[0])}</td><td>${md(r.promluvy[1])}</td></tr>
     <tr><td><b>Veršová výstavba</b> (jen u poezie)</td><td>${r.vers?md(r.vers):"✗ (není poezie)"}</td></tr></tbody></table></div>`)}
   ${sec(8,"Literárně-historický kontext díla a autora",`<h4>A – Autor</h4><div class="tw"><table><thead><tr><th style="width:50%">Život autora</th><th>Znaky jeho psaní / tvorby</th></tr></thead><tbody><tr><td>${list(r.autor.zivot)}</td><td>${list(r.autor.znaky)}</td></tr></tbody></table></div>
+    <div class="bnote anote"><b>👤 Moje poznámky k autorovi – ${esc(r.au.split(" (")[0])}</b><textarea data-an="${esc(r.au.split(" (")[0])}" placeholder="Poznámky k autorovi – život, směr, styl, další díla…"></textarea><div class="nst"></div><div class="pr"></div></div>
     <h4>B – Další díla autora</h4>${pairs("Dílo","Informace k dílu",r.dalsi)}
     <h4>C – Směr / skupina</h4><div class="tw"><table><tbody>${row(md(r.smer[0]).replace(/<\/?mark>/g,""),r.smer[1])}</tbody></table></div>
     <h4>D – Významní autoři směru / doby</h4>${pairs("Autor","Informace o díle a životě",r.autori)}`)}
@@ -365,11 +400,22 @@ const NKEY="rozbory-poznamky-v1";
 let bnotes=load(NKEY),bnT;
 function paintNote(b){
   const no=b.id.slice(1),t=bnotes[no]||"",box=b.querySelector(".bnote");
-  b.querySelector(".ncount").textContent=t?"✎ poznámka":"";
+  b.querySelector(".ncount").textContent=t?"📖 poznámka k dílu":"";
   box.classList.toggle("empty",!t);box.querySelector(".pr").textContent=t;
 }
 books.forEach(b=>{b.querySelector("[data-bn]").value=bnotes[b.id.slice(1)]||"";paintNote(b);});
+/* poznámky k autorovi – oddělené od poznámek k dílu (u Moliéra, Orwella, Čapka… sdílené mezi jeho díly) */
+const AKEY="rozbory-poznamky-autor-v1";let anotes=load(AKEY),anT;
+function paintAuthor(ta){const t=anotes[ta.dataset.an]||"",box=ta.closest(".bnote");box.classList.toggle("empty",!t);box.querySelector(".pr").textContent=t;}
+main.querySelectorAll("[data-an]").forEach(ta=>{ta.value=anotes[ta.dataset.an]||"";paintAuthor(ta);});
 main.addEventListener("input",e=>{
+  const at=e.target.closest("[data-an]");
+  if(at){clearTimeout(anT);anT=setTimeout(()=>{
+    if(at.value.trim())anotes[at.dataset.an]=at.value;else delete anotes[at.dataset.an];
+    let ok=true;try{localStorage.setItem(AKEY,JSON.stringify(anotes));}catch(x){ok=false;}
+    at.nextElementSibling.textContent=ok?"Uloženo"+(main.querySelectorAll(`[data-an="${CSS.escape(at.dataset.an)}"]`).length>1?" (platí pro všechna díla tohoto autora)":""):"Prohlížeč nepovolil ukládání";
+    main.querySelectorAll(`[data-an="${CSS.escape(at.dataset.an)}"]`).forEach(x=>{if(x!==at)x.value=at.value;paintAuthor(x);});
+  },400);return;}
   const ta=e.target.closest("[data-bn]");if(!ta)return;
   clearTimeout(bnT);bnT=setTimeout(()=>{
     if(ta.value.trim())bnotes[ta.dataset.bn]=ta.value;else delete bnotes[ta.dataset.bn];
@@ -380,11 +426,104 @@ main.addEventListener("input",e=>{
 });
 paintLvl();
 
+/* ===== procvičování četby ===== */
+const plainTxt=t=>String(t||"").replace(/\*+/g,"");
+const core=t=>plainTxt(t).split(/ – | \(|;|, /)[0].trim();
+const shufA=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function mk(q,ok,pool,expl,no,n=3){const o=[];for(const x of shufA(pool)){if(o.length===n)break;if(x&&x!==ok&&!o.includes(x))o.push(x);}return o.length===n?{q,ok,opts:shufA([ok,...o]),expl,no}:null;}
+const DRUHY=r=>{const d=plainTxt(r.druh).toLowerCase();return d.includes("lyrickoep")?"lyrickoepika":d.includes("drama")?"drama":d.includes("lyrik")?"lyrika":"epika";};
+const VYP=r=>r.vyp.drama?"bez vypravěče (drama)":/ich/i.test(r.vyp.osoba[0])&&/er-forma/i.test(r.vyp.osoba[0])?null:/ich/i.test(r.vyp.osoba[0])?"ich-forma":"er-forma";
+const POSTAVY={};ROZBORY.forEach(r=>r.postavy.forEach(p=>plainTxt(p[0]).split(" / ").forEach(n=>{n=n.replace(/\s*\(.*?\)/g,"").trim();
+  if(!n||/^(Vypravěč|Lyrický|Přednášející|Postavy|Členové|Jára|Úředníci|Jeptišky|Manželé|Měsíc|Mloci)/.test(n)||r.t.toLowerCase().includes(n.toLowerCase()))return;(POSTAVY[n]=POSTAVY[n]||new Set()).add(r.no);})));
+// hlavní žánr každé knihy + žánry, které se s ním překrývají (ty se jako špatná odpověď nenabízí)
+const GEN={1:"komedie",2:"komedie",3:"komedie",4:"satirická báseň",5:"lyrickoepická báseň",6:"novela",7:"román",8:"román",9:"literatura faktu",10:"román",11:"román",12:"alegorická bajka",13:"novela",14:"utopické drama",15:"román",16:"novela",17:"román",18:"povídka",19:"komedie",20:"komedie"};
+const GEN_CLASH={novela:["povídka","román"],povídka:["novela"],román:["novela","literatura faktu"],"alegorická bajka":["novela","povídka"],"literatura faktu":["román"],"utopické drama":["komedie"]};
+const GEN_ALL=["komedie","satirická báseň","lyrickoepická báseň","novela","román","literatura faktu","alegorická bajka","utopické drama","povídka","tragédie","balada"];
+// skutečné místo hry (ne seminář) u cimrmanovských her
+const PLACE={19:"České nebe",20:"Arktida – cesta k severnímu pólu"};
+const STOP=new Set(["litera","česká","světo","stolet","próza","období","pol. 2","1. pol"]);
+const stems=t=>new Set(plainTxt(t).toLowerCase().split(/[^a-záčďéěíňóřšťúůýž]+/).filter(w=>w.length>=5).map(w=>w.slice(0,6)).filter(w=>!STOP.has(w)));
+const overlap=(a,b)=>{const A=stems(a);return [...stems(b)].some(w=>A.has(w));};
+const smerCore=t=>plainTxt(t).replace(/\s*\([^)]*\)/g,"").split(/ – |;|, /)[0].trim();
+function bookQs(r){
+  const T=ROZBORY.map(x=>x.t),A=[...new Set(ROZBORY.map(x=>x.au.split(" (")[0]))],au=r.au.split(" (")[0],qs=[];
+  qs.push(mk(`Kdo napsal dílo ${r.t}?`,au,A,`${r.t} (${r.rok}) – ${au}`,r.no));
+  qs.push(mk(`Jaký literární druh je ${r.t}?`,DRUHY(r),["epika","lyrika","drama","lyrickoepika"],`${r.t}: ${plainTxt(r.druh)}, ${plainTxt(r.zanr)}`,r.no));
+  const g=GEN[r.no],bad=new Set(GEN_CLASH[g]||[]);
+  qs.push(mk(`Jaký je literární žánr díla ${r.t}?`,g,GEN_ALL.filter(x=>!bad.has(x)),`${r.t}: ${plainTxt(r.zanr)}`,r.no));
+  const v=VYP(r);if(v)qs.push(mk(`Jaký je vypravěč v díle ${r.t}?`,v,["ich-forma","er-forma","bez vypravěče (drama)"],r.vyp.drama?"Drama nemá vypravěče.":`${plainTxt(r.vyp.osoba[0])} – ${plainTxt(r.vyp.osoba[1])}`,r.no,2));
+  const place=x=>PLACE[x.no]||core(x.prostor[0][0]),pc=place(r);
+  if(!r.t.toLowerCase().includes(pc.toLowerCase()))qs.push(mk(`Kde se (hlavně) odehrává ${r.t}?`,pc,ROZBORY.filter(x=>x.no!==r.no).map(place),PLACE[r.no]?`${pc}`:`${pc} – ${plainTxt(r.prostor[0][1])}`,r.no));
+  const sc=smerCore(r.smer[0]),same=new Set(ROZBORY.filter(x=>x.au===r.au||(r.cat==="D"&&x.cat==="D")).map(x=>smerCore(x.smer[0]))); // česká lit. 20. st. – směry se překrývají, nenabízet je proti sobě
+  qs.push(mk(`K jakému směru / období patří dílo ${r.t}?`,sc,ROZBORY.map(x=>smerCore(x.smer[0])).filter(x=>x!==sc&&!same.has(x)&&!overlap(x,sc)),`${plainTxt(r.smer[0])}: ${plainTxt(r.smer[1]).slice(0,220)}…`,r.no));
+  Object.keys(POSTAVY).filter(n=>POSTAVY[n].size===1&&POSTAVY[n].has(r.no)).forEach(n=>{
+    const p=r.postavy.find(x=>plainTxt(x[0]).includes(n));
+    qs.push(mk(`Ze kterého díla je postava: ${n}?`,r.t,T,`${n} – ${plainTxt(p[1])} (${r.t})`,r.no));});
+  return qs.filter(Boolean);
+}
+const cv=document.getElementById("cv"),cvIn=document.getElementById("cvIn");let CR=null;
+const cvTop=t=>`<div class="top"><h2>${t}</h2><button class="x" data-cvx aria-label="Zavřít">×</button></div>`;
+function cvScope(sc){
+  if(sc==="weak")return ROZBORY.filter(r=>lvl[r.no]==="no"||lvl[r.no]==="mid");
+  if(sc==="none")return ROZBORY.filter(r=>!lvl[r.no]);
+  if(sc.startsWith("b"))return ROZBORY.filter(r=>r.no===+sc.slice(1));
+  return ROZBORY;
+}
+function cvSetup(){
+  cvIn.innerHTML=cvTop("Procvičování četby")+`<p class="note">Otázky z tvých rozborů: autor, druh, žánr, vypravěč, místo a čas děje, směr a postavy. <b>Celé téma</b> projde všechno, spletené otázky se ti na konci vrátí.</p>
+  <label for="cvS">Z čeho</label><select id="cvS"><option value="all">Všech 20 knih</option><option value="weak">Knihy, co mi nejdou (napůl / neumím)</option><option value="none">Knihy, které jsem ještě neoznačila</option>
+  <optgroup label="Jedna kniha">${ROZBORY.map(r=>`<option value="b${r.no}">${r.no}. ${esc(r.t)}</option>`).join("")}</optgroup></select>
+  <label for="cvM">Jak</label><select id="cvM"></select><button class="go" id="cvGo">Začít</button>`;
+  const S=document.getElementById("cvS"),M=document.getElementById("cvM");if(CR)S.value=CR.sc;
+  const fill=()=>{const n=cvScope(S.value).flatMap(bookQs).length;M.innerHTML=`<option value="full">Celé téma – ${n} otázek</option><option value="quick">Rychlé kolo – ${Math.min(10,n)} otázek</option>`;};
+  S.onchange=fill;fill();
+}
+function cvStart(sc,mode){
+  let qs=shufA(cvScope(sc).flatMap(bookQs));if(mode==="quick")qs=qs.slice(0,10);
+  if(!qs.length){cvIn.innerHTML=cvTop("Procvičování četby")+`<p>Pro tenhle výběr nejsou otázky${sc==="weak"?" – nejdřív si u knih označ, co ti nejde":""}.</p><button class="go" data-cvset>Zpět</button>`;return;}
+  CR={sc,mode,qs,first:qs.length,i:0,ok:0,wrong:[]};cvShow();
+}
+function cvShow(){
+  const q=CR.qs[CR.i];
+  cvIn.innerHTML=cvTop("Procvičování četby")+`<div class="meta"><span>${CR.i+1} / ${CR.qs.length}</span><div class="tr"><div style="width:${CR.i/CR.qs.length*100}%"></div></div><span>${CR.ok} ✓</span></div>
+  ${q.retry?`<p class="note">↻ opakování otázky, kterou jsi spletla</p>`:""}<div class="q">${esc(q.q)}</div>
+  ${q.opts.map((o,i)=>`<button class="opt" data-o="${i}">${esc(o)}</button>`).join("")}<div id="cvFb"></div>`;
+}
+function cvAnswer(i){
+  const q=CR.qs[CR.i],good=q.opts[i]===q.ok;
+  cvIn.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(q.opts[j]===q.ok)b.classList.add("ok");else if(j===i)b.classList.add("bad");});
+  if(good){if(!q.retry)CR.ok++;}else{if(!q.retry)CR.wrong.push({q,ch:q.opts[i]});if(CR.mode==="full")CR.qs.push({...q,opts:shufA(q.opts),retry:true});}
+  document.getElementById("cvFb").innerHTML=`<div class="fb"><b>${good?"Správně!":"Správně je: "+esc(q.ok)}</b><div style="margin-top:6px">${esc(q.expl)}</div></div><button class="go" id="cvNext">${CR.i+1<CR.qs.length?"Další otázka":"Výsledek"}</button>`;
+  document.getElementById("cvNext").focus();
+}
+function cvResult(){
+  cvIn.innerHTML=cvTop("Výsledek")+`<div class="score">${CR.ok} / ${CR.first}</div><p class="note">správně napoprvé</p>
+  ${CR.wrong.length?`<div class="mist"><b class="note">Chyby k zopakování</b>${CR.wrong.map(w=>`<div>${esc(w.q.q)}<br>Tvoje odpověď: <s>${esc(w.ch)}</s> → <b>${esc(w.q.ok)}</b> · <a href="#d${w.q.no}" data-cvgo="${w.q.no}">otevřít rozbor</a></div>`).join("")}</div>`:""}
+  <button class="go" id="cvAgain">${CR.mode==="full"?"Projít znovu":"Další kolo"}</button><button class="go" data-cvset style="background:var(--card);color:var(--ink);border:1px solid var(--rule)">Změnit výběr</button>`;
+}
+const cvClose=()=>{cv.classList.remove("open");document.body.style.overflow="";};
+document.getElementById("cvicBtn").onclick=()=>{cv.classList.add("open");document.body.style.overflow="hidden";cvSetup();};
+cvIn.addEventListener("click",e=>{
+  if(e.target.closest("[data-cvx]"))return cvClose();
+  if(e.target.id==="cvGo")return cvStart(document.getElementById("cvS").value,document.getElementById("cvM").value);
+  const o=e.target.closest(".opt");if(o&&!o.disabled)return cvAnswer(+o.dataset.o);
+  if(e.target.id==="cvNext"){CR.i++;return CR.i<CR.qs.length?cvShow():cvResult();}
+  if(e.target.id==="cvAgain")return cvStart(CR.sc,CR.mode);
+  if(e.target.closest("[data-cvset]"))return cvSetup();
+  const g=e.target.closest("[data-cvgo]");if(g){cvClose();const d=document.getElementById("d"+g.dataset.cvgo);d.classList.remove("hide","fhide");d.open=true;}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&cv.classList.contains("open"))cvClose();});
+
+document.getElementById("zExp").onclick=()=>Zaloha.export();
+const zf=document.getElementById("zFile");
+document.getElementById("zImp").onclick=()=>zf.click();
+zf.addEventListener("change",()=>{const f=zf.files[0];if(!f)return;Zaloha.import(f).catch(()=>{document.getElementById("zMsg").textContent="Tohle není záloha z této stránky.";}).finally(()=>zf.value="");});
+
 const norm=t=>(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 let qT;
 document.getElementById("q").addEventListener("input",e=>{clearTimeout(qT);qT=setTimeout(()=>{
   const q=norm(e.target.value.trim());
-  books.forEach(b=>b.classList.toggle("hide",!(!q||b.dataset.text.includes(q)||norm(b.textContent).includes(q)||norm(bnotes[b.id.slice(1)]).includes(q))));
+  books.forEach(b=>b.classList.toggle("hide",!(!q||b.dataset.text.includes(q)||norm(b.textContent).includes(q)||norm(bnotes[b.id.slice(1)]).includes(q)||norm(anotes[b.querySelector("[data-an]").dataset.an]).includes(q))));
   updateCats();
 },120);});
 </script>

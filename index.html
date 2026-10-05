@@ -244,6 +244,15 @@ body.searching .era{margin-top:10px;padding-top:20px}
 footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--sans);font-size:13px;color:var(--muted)}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* psaní do textu */
+.psani [contenteditable]{outline:1px dashed #8B5CF6;outline-offset:2px;border-radius:3px;cursor:text}
+.psani [contenteditable]:focus{outline:2px solid #8B5CF6;background:color-mix(in srgb,#8B5CF6 7%,transparent)}
+.psani .edited{box-shadow:inset 3px 0 0 #8B5CF6}
+.edbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:70;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;background:#5B21B6;color:#fff;border-radius:18px;padding:10px 12px;font-family:var(--sans);font-size:13.5px;box-shadow:0 6px 20px rgba(0,0,0,.3);width:max-content;max-width:calc(100vw - 24px)}
+.edbar[hidden]{display:none}
+.edbar button{border:1px solid #fff;background:none;color:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font-size:13.5px;font-family:var(--sans)}
+.edbar button[data-done]{background:#fff;color:#5B21B6;font-weight:600}
+@media print{.edbar{display:none!important}}
 /* zvýrazňovač */
 .uhl{border-radius:2px;padding:0 1px;cursor:pointer;color:#1A2233;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .uhl.y{background:#FFE45C}.uhl.g{background:#9BE7A8}.uhl.p{background:#FFB3D1}.uhl.b{background:#A9D4FF}
@@ -272,6 +281,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
   <h1>Literární historie<br>k maturitě</h1>
   <p>Všechno, co katalog CERMAT (část C) vyžaduje z literární historie: epochy, směry, skupiny, všichni autoři ze seznamu a jejich klíčová díla. Seřazeno chronologicky, jak se to vyvíjelo.</p>
   <p><b>Zvýrazňovač:</b> označ v textu slova (tažením prstem nebo myší) a dole vyber barvu; na zvýraznění klepni, když ho chceš přebarvit nebo odebrat.</p>
+  <p><b>Psaní do textu:</b> tlačítkem <b>✎ Psát do textu</b> nahoře můžeš cokoli v textu dopsat, smazat nebo přepsat – jako do sešitu. Původní text jde kdykoli vrátit.</p>
   <p>U každého autora si označ <b>✓ umím / ~ napůl / ✗ neumím</b>. Tlačítkem <b>Co mi nejde</b> nahoře pak uvidíš jen to, co ještě potřebuješ dohnat.</p>
   <section class="cetba" aria-labelledby="cetbaH">
     <div class="cetba-top">
@@ -299,6 +309,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
     </div>
     <button class="pbtn" id="practice">Procvičovat</button>
     <a class="pbtn" href="rozbory.html">Moje četba</a>
+    <button class="pbtn" id="psaniBtn" aria-pressed="false" style="background:#7C3AED">✎ Psát do textu</button>
     <input class="search" id="q" type="search" placeholder="Hledat autora, dílo, pojem…" aria-label="Hledat">
     <nav class="jump" id="jump" aria-label="Přejít na epochu"></nav>
     <div class="qinfo" id="qInfo" hidden></div>
@@ -336,6 +347,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
 </div>
 
 <script src="rozbory-data.js"></script>
+<script src="psani.js"></script>
 <script>
 /* ---- karta „Moje četba“: 20 děl ze školního seznamu ---- */
 (function(){
@@ -697,7 +709,7 @@ function hlWrap(el,s,e,cls,id){
   todo.forEach(([n,a,z])=>{let t=n;if(a>0)t=t.splitText(a);if(z-a<t.data.length)t.splitText(z-a);
     const m=document.createElement("span");m.className="uhl "+cls;m.dataset.id=id;t.replaceWith(m);m.appendChild(t);});
 }
-function hlPaint(el){hlUnwrap(el);(hls[el.dataset.hk]||[]).forEach(h=>hlWrap(el,h.s,h.e,h.c,h.id));}
+function hlPaint(el){if(TE.has(el.dataset.hk))return;hlUnwrap(el);(hls[el.dataset.hk]||[]).forEach(h=>hlWrap(el,h.s,h.e,h.c,h.id));}
 function paintAllHl(){document.querySelectorAll("[data-hk]").forEach(el=>{if(hls[el.dataset.hk]||el.querySelector(".uhl"))hlPaint(el);});}
 const hlOffset=(el,node,off)=>{const r=document.createRange();r.selectNodeContents(el);r.setEnd(node,off);return r.toString().length;};
 const hlbar=document.getElementById("hlbar");
@@ -708,6 +720,7 @@ function hlShow(mode){
 function hlHide(){hlbar.hidden=true;pendingRange=null;if(selHl){document.querySelectorAll(".uhl.sel").forEach(x=>x.classList.remove("sel"));selHl=null;}}
 let hlT;
 document.addEventListener("selectionchange",()=>{clearTimeout(hlT);hlT=setTimeout(()=>{
+  if(document.body.classList.contains("psani"))return;
   const sel=getSelection();
   if(!sel.rangeCount||sel.isCollapsed){if(pendingRange&&!selHl)hlHide();return;}
   const r=sel.getRangeAt(0),up=x=>(x.nodeType===1?x:x.parentElement),a=up(r.startContainer)?.closest("[data-hk]"),z=up(r.endContainer)?.closest("[data-hk]");
@@ -720,6 +733,15 @@ document.addEventListener("selectionchange",()=>{clearTimeout(hlT);hlT=setTimeou
 hlbar.addEventListener("mousedown",e=>e.preventDefault());
 hlbar.addEventListener("click",e=>{
   const c=e.target.closest("[data-c]"),rm=e.target.closest("[data-rm]");
+  if(pendingRange&&c&&TE.has(pendingRange.k)){ // upravený odstavec: zvýraznění se uloží přímo do textu
+    const {k,s,e:en}=pendingRange,el=document.querySelector(`[data-hk="${CSS.escape(k)}"]`);
+    hlWrap(el,s,en,c.dataset.c,Date.now().toString(36));TE.save(el);getSelection().removeAllRanges();hlHide();return;
+  }
+  if(selHl&&(c||rm)&&TE.has(selHl.k)){
+    const el=document.querySelector(`[data-hk="${CSS.escape(selHl.k)}"]`);
+    el.querySelectorAll(`.uhl[data-id="${selHl.id}"]`).forEach(m=>{if(rm)m.replaceWith(...m.childNodes);else m.className="uhl "+c.dataset.c;});
+    el.normalize();TE.save(el);hlHide();return;
+  }
   if(pendingRange&&c){
     const {k,s,e:en}=pendingRange,list=(hls[k]||[]).filter(h=>h.e<=s||h.s>=en);
     list.push({s,e:en,c:c.dataset.c,id:Date.now().toString(36)+Math.random().toString(36).slice(2,5)});
@@ -735,7 +757,7 @@ hlbar.addEventListener("click",e=>{
 });
 document.addEventListener("click",e=>{
   const m=e.target.closest("#main .uhl");
-  if(m&&getSelection().isCollapsed&&!document.body.classList.contains("quiz")){
+  if(m&&getSelection().isCollapsed&&!document.body.classList.contains("quiz")&&!document.body.classList.contains("psani")){
     document.querySelectorAll(".uhl.sel").forEach(x=>x.classList.remove("sel"));
     document.querySelectorAll(`.uhl[data-id="${m.dataset.id}"]`).forEach(x=>x.classList.add("sel"));
     selHl={k:m.closest("[data-hk]").dataset.hk,id:m.dataset.id};pendingRange=null;hlShow("edit");return;
@@ -743,6 +765,8 @@ document.addEventListener("click",e=>{
   if(!e.target.closest(".hlbar")&&selHl)hlHide();
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!hlbar.hidden)hlHide();});
+const TE=TextEdit.init({key:"lit-hist-text-v1",els:[...document.querySelectorAll("#main [data-hk]")],btn:document.getElementById("psaniBtn"),
+  onRevert:hlPaint,onStart:()=>{document.getElementById("mAll").click();hlHide();}});
 paintAllHl();
 
 document.getElementById("jump").innerHTML=ERAS.map(e=>`<a href="#${e.id}" data-era="${e.id}">${e.name}<span class="dot" hidden></span></a>`).join("")+`<a href="#zanry">Žánry</a><a href="#teorie">Teorie</a><a href="#plete">Pozor, plete se</a>`;
@@ -858,7 +882,7 @@ function download(name,text,type){
 function msg(t){const m=document.getElementById("nMsg");m.textContent=t;m.hidden=false;setTimeout(()=>m.hidden=true,3000)}
 const today=()=>new Date().toISOString().slice(0,10);
 document.getElementById("bExport").addEventListener("click",()=>{
-  download(`maturita-literatura-zaloha-${today()}.json`,JSON.stringify({app:"lit-hist",v:5,notes,lvl,hl:hls},null,1),"application/json");
+  download(`maturita-literatura-zaloha-${today()}.json`,JSON.stringify({app:"lit-hist",v:6,notes,lvl,hl:hls,text:TE.edits},null,1),"application/json");
 });
 document.getElementById("bTxt").addEventListener("click",()=>{
   let t="MOJE POZNÁMKY – LITERÁRNÍ HISTORIE\n";
@@ -889,7 +913,7 @@ fi.addEventListener("change",()=>{
     const d=JSON.parse(t);if(d.app!=="lit-hist")throw 0;
     const n=Object.keys(d.notes||{}).length;
     if(!confirm(`Záloha obsahuje ${n} poznámek. Nahradit tím současná data?`))return;
-    notes=d.notes||{};lvl=d.lvl||Object.fromEntries((d.known||[]).map(n=>[n,"ok"]));if(d.hl){hls=d.hl;storeHl();paintAllHl();}saveNotes();saveKnown();renderNotes();renderKnown();msg("Záloha nahrána.");
+    notes=d.notes||{};lvl=d.lvl||Object.fromEntries((d.known||[]).map(n=>[n,"ok"]));if(d.hl){hls=d.hl;storeHl();paintAllHl();}if(d.text){TE.edits=d.text;TE.store();setTimeout(()=>location.reload(),800);}saveNotes();saveKnown();renderNotes();renderKnown();msg("Záloha nahrána.");
   }).catch(()=>msg("Tohle není záloha z tohoto souboru.")).finally(()=>fi.value="");
 });
 document.getElementById("nlist").addEventListener("click",ev=>{

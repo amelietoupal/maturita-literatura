@@ -113,6 +113,12 @@ details.book.lv-no{border-left-color:var(--no)}
 .hlbar .sw.y{background:#FFE45C}.hlbar .sw.g{background:#9BE7A8}.hlbar .sw.p{background:#FFB3D1}.hlbar .sw.b{background:#A9D4FF}
 .hlbar .rm{border:1px solid var(--paper);background:none;color:var(--paper);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:14px}
 .hlclear{margin-top:16px;border:1px solid var(--rule);background:var(--card);border-radius:999px;padding:5px 12px;font-family:var(--sans);font-size:13px;color:var(--muted);cursor:pointer}
+.bnote{margin:16px 0 0;padding:12px 14px;border:1px dashed var(--c);border-radius:8px;background:color-mix(in srgb,var(--head) 40%,transparent)}
+.bnote b{font-family:var(--sans);font-size:14px}
+.bnote textarea{display:block;width:100%;min-height:90px;margin-top:6px;border:1px solid var(--rule);border-radius:6px;padding:9px 11px;background:var(--card);color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.5;resize:vertical}
+.bnote .nst{font-family:var(--sans);font-size:12px;color:var(--muted);margin-top:3px;min-height:1em}
+.bnote .pr{display:none;white-space:pre-wrap}
+@media print{.bnote textarea,.bnote .nst{display:none}.bnote .pr{display:block}.bnote.empty{display:none}}
 @media print{.lv,.prog,.flt,.hlbar,.hlclear{display:none!important}.uhl{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans);font-size:13px;color:var(--muted)}
 
@@ -182,9 +188,10 @@ function render(r){
        <tr><td><b>Dle gramatické osoby:</b><br>${md(r.vyp.osoba[0])}</td><td>${md(r.vyp.osoba[1])}</td></tr>
        <tr><td><b>Dle vyprávěcí roviny:</b><br>${md(r.vyp.rovina[0])}</td><td>${md(r.vyp.rovina[1])}</td></tr></tbody></table></div>`;
   return `<details class="book" id="d${r.no}" style="--c:var(--${r.cat})" data-text="${esc(JSON.stringify(r).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,""))}">
-  <summary><span class="no">${r.no}.</span><span class="ttl">${esc(r.t)}<small>${esc(r.au)} · ${esc(r.rok)}${r.orig?` · orig. <i>${esc(r.orig)}</i>`:""}</small></span><span class="chev" aria-hidden="true">›</span><span class="lv" role="group" aria-label="Jak umím tuto knihu"><button data-v="ok" aria-pressed="false">✓ umím</button><button data-v="mid" aria-pressed="false">~ napůl</button><button data-v="no" aria-pressed="false">✗ neumím</button><span class="hlcount"></span></span></summary>
+  <summary><span class="no">${r.no}.</span><span class="ttl">${esc(r.t)}<small>${esc(r.au)} · ${esc(r.rok)}${r.orig?` · orig. <i>${esc(r.orig)}</i>`:""}</small></span><span class="chev" aria-hidden="true">›</span><span class="lv" role="group" aria-label="Jak umím tuto knihu"><button data-v="ok" aria-pressed="false">✓ umím</button><button data-v="mid" aria-pressed="false">~ napůl</button><button data-v="no" aria-pressed="false">✗ neumím</button><span class="hlcount"></span><span class="hlcount ncount"></span></span></summary>
   <div class="body">
   ${r.over?`<div class="warn">⚠ ${md(r.over)}</div>`:""}
+  <div class="bnote"><b>✎ Moje poznámky ke knize</b><textarea data-bn="${r.no}" placeholder="Tvoje poznámky – co říct u zkoušky, citáty, vlastní postřehy z četby, co si zopakovat…"></textarea><div class="nst"></div><div class="pr"></div></div>
   ${sec(1,"Kompoziční rovina literárního díla",`<div class="tw"><table><tbody>
     ${row("Literární forma",r.forma)}${row("Literární druh",r.druh)}${row("Literární žánr",r.zanr)}
     ${row("Struktura díla (složení / dělení)",r.struktura)}${row("Vyprávěcí postup",r.postup)}</tbody></table></div>`)}
@@ -325,13 +332,32 @@ main.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")hideBar();});
 books.forEach(paintBookHl);
+
+/* ===== poznámky ke knize ===== */
+const NKEY="rozbory-poznamky-v1";
+let bnotes=load(NKEY),bnT;
+function paintNote(b){
+  const no=b.id.slice(1),t=bnotes[no]||"",box=b.querySelector(".bnote");
+  b.querySelector(".ncount").textContent=t?"✎ poznámka":"";
+  box.classList.toggle("empty",!t);box.querySelector(".pr").textContent=t;
+}
+books.forEach(b=>{b.querySelector("[data-bn]").value=bnotes[b.id.slice(1)]||"";paintNote(b);});
+main.addEventListener("input",e=>{
+  const ta=e.target.closest("[data-bn]");if(!ta)return;
+  clearTimeout(bnT);bnT=setTimeout(()=>{
+    if(ta.value.trim())bnotes[ta.dataset.bn]=ta.value;else delete bnotes[ta.dataset.bn];
+    let ok=true;try{localStorage.setItem(NKEY,JSON.stringify(bnotes));}catch(x){ok=false;}
+    ta.nextElementSibling.textContent=ok?"Uloženo":"Prohlížeč nepovolil ukládání";
+    paintNote(ta.closest("details"));
+  },400);
+});
 paintLvl();
 
 const norm=t=>(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 let qT;
 document.getElementById("q").addEventListener("input",e=>{clearTimeout(qT);qT=setTimeout(()=>{
   const q=norm(e.target.value.trim());
-  books.forEach(b=>b.classList.toggle("hide",!(!q||b.dataset.text.includes(q))));
+  books.forEach(b=>b.classList.toggle("hide",!(!q||b.dataset.text.includes(q)||norm(bnotes[b.id.slice(1)]).includes(q))));
   updateCats();
 },120);});
 </script>

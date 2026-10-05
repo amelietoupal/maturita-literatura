@@ -110,6 +110,9 @@ main{max-width:1100px;margin:0 auto;padding:0 20px 120px}
 .nlist .it{padding:10px 0;border-bottom:1px solid var(--rule)}
 .nlist .it a{font-weight:600;text-decoration:none;border-bottom:1px solid var(--note-line)}
 .nlist .it div{white-space:pre-wrap;margin-top:4px;color:var(--ink)}
+.nlist textarea,.gen textarea{display:block;width:100%;min-height:70px;margin-top:6px;border:1px solid var(--rule);border-radius:8px;padding:9px 11px;background:var(--card);color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.5;resize:vertical}
+.gen{margin:4px 0 14px}.gen b{font-size:14px}.gen textarea{min-height:120px}
+.nst{font-size:12px;color:var(--muted);margin-top:3px;min-height:1em}
 .nlist h3{font-size:13px;color:var(--muted);font-weight:600;margin:16px 0 0}
 
 /* known + progress */
@@ -326,6 +329,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
       </div>
       <input type="file" id="fImport" accept=".json,application/json" hidden>
       <p class="note" id="nMsg" hidden></p>
+      <div class="gen"><b>Obecné poznámky</b><textarea id="genNote" placeholder="Sem si piš cokoli – co se zeptat učitelky, co zopakovat, souvislosti…"></textarea><div class="nst" id="genSt"></div></div>
       <div class="nlist" id="nlist"></div>
     </div>
   </div>
@@ -799,7 +803,7 @@ document.addEventListener("keydown",ev=>{if(ev.key==="Escape")dr.classList.remov
 /* ===================== NOTES ===================== */
 const ERA_NAME=Object.fromEntries(ERAS.map(e=>[e.id,e.name]));
 const AU_ERA={};ERAS.forEach(e=>e.au.forEach(a=>AU_ERA[a.n]=e.id));
-function noteLabel(k){return k.startsWith("era:")?"Epocha: "+ERA_NAME[k.slice(4)]:k.slice(3)}
+function noteLabel(k){return k.startsWith("gen:")?"Obecné poznámky":k.startsWith("era:")?"Epocha: "+ERA_NAME[k.slice(4)]:k.slice(3)}
 function noteEra(k){return k.startsWith("era:")?k.slice(4):AU_ERA[k.slice(3)]}
 function renderNotes(){
   document.querySelectorAll("[data-nk]").forEach(c=>{
@@ -813,13 +817,15 @@ function renderNotes(){
   const keys=Object.keys(notes).filter(k=>notes[k]);
   document.getElementById("fabNotes").textContent=keys.length;
   let h="";
-  if(!keys.length)h=`<p class="note">Zatím žádné poznámky. U každého autora a každé epochy je tlačítko „✎ Poznámka“.</p>`;
+  if(!keys.filter(k=>!k.startsWith("gen:")).length)h=`<p class="note">Poznámky k autorům a epochám píšeš tlačítkem „✎ Poznámka“ u autora nebo epochy – pak se objeví tady a můžeš je upravovat i zde.</p>`;
   ERAS.forEach(e=>{
     const ks=keys.filter(k=>noteEra(k)===e.id).sort((a,b)=>a.startsWith("era:")?-1:b.startsWith("era:")?1:0);
     if(!ks.length)return;
-    h+=`<h3>${e.name}</h3>`+ks.map(k=>`<div class="it"><a href="#" data-goto="${esc(k)}">${esc(noteLabel(k))}</a><div>${esc(notes[k])}</div></div>`).join("");
+    h+=`<h3>${e.name}</h3>`+ks.map(k=>`<div class="it"><a href="#" data-goto="${esc(k)}">${esc(noteLabel(k))}</a><textarea data-edit="${esc(k)}" aria-label="Poznámka: ${esc(noteLabel(k))}">${esc(notes[k])}</textarea><div class="nst"></div></div>`).join("");
   });
-  document.getElementById("nlist").innerHTML=h;
+  const nl=document.getElementById("nlist");
+  if(!nl.contains(document.activeElement))nl.innerHTML=h; // nepřekreslovat, když se v panelu právě píše
+  const g=document.getElementById("genNote");if(document.activeElement!==g)g.value=notes["gen:obecne"]||"";
 }
 function closeEditors(){document.querySelectorAll(".ned").forEach(n=>{const c=n.closest("[data-nk]"),v=n.querySelector("textarea").value;if(v.trim())notes[c.dataset.nk]=v;else delete notes[c.dataset.nk];saveNotes();n.parentElement.closest("[data-nk]").classList.remove("editing");n.remove();});renderNotes();}
 function openEditor(c){
@@ -856,10 +862,25 @@ document.getElementById("bExport").addEventListener("click",()=>{
 });
 document.getElementById("bTxt").addEventListener("click",()=>{
   let t="MOJE POZNÁMKY – LITERÁRNÍ HISTORIE\n";
+  if(notes["gen:obecne"])t+=`\n== Obecné poznámky ==\n${notes["gen:obecne"]}\n`;
   ERAS.forEach(e=>{const ks=Object.keys(notes).filter(k=>notes[k]&&noteEra(k)===e.id);if(!ks.length)return;
     t+=`\n\n== ${e.name} ==\n`+ks.map(k=>`\n• ${noteLabel(k)}\n${notes[k]}`).join("\n");});
   download(`maturita-literatura-poznamky-${today()}.txt`,t,"text/plain;charset=utf-8");
 });
+/* psaní přímo v panelu Poznámky */
+let ndT;
+function drawerSave(k,v,st){
+  clearTimeout(ndT);ndT=setTimeout(()=>{
+    if(v.trim())notes[k]=v;else delete notes[k];
+    const ok=saveNotes();if(st)st.textContent=ok?"Uloženo":"Prohlížeč nepovolil ukládání – stáhni si zálohu";
+    const c=document.querySelector(`#main [data-nk="${CSS.escape(k)}"]`);
+    if(c){const mn=c.querySelector(".mynote");if(mn)mn.textContent=notes[k]||"";c.classList.toggle("has-note",!!notes[k]);}
+    document.getElementById("fabNotes").textContent=Object.keys(notes).filter(x=>notes[x]).length;
+  },400);
+}
+document.getElementById("nlist").addEventListener("input",e=>{const t=e.target.closest("[data-edit]");if(t)drawerSave(t.dataset.edit,t.value,t.nextElementSibling);});
+document.getElementById("genNote").addEventListener("input",e=>drawerSave("gen:obecne",e.target.value,document.getElementById("genSt")));
+dr.addEventListener("click",e=>{if(e.target.closest("[data-close]"))setTimeout(renderNotes,450);});
 const fi=document.getElementById("fImport");
 document.getElementById("bImport").addEventListener("click",()=>fi.click());
 fi.addEventListener("change",()=>{

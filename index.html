@@ -332,7 +332,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
     <button class="close" data-close aria-label="Zavřít">×</button>
     <h2 id="dTitle">Moje poznámky</h2>
     <div id="pNotes">
-      <p class="note">Poznámky se ukládají jen v tomhle prohlížeči na tomhle zařízení. Občas si stáhni zálohu – když soubor otevřeš jinde nebo smažeš data prohlížeče, nahraješ ji zpět.</p>
+      <p class="note">Všechno, co si tu i v rozborech uděláš (poznámky, zvýraznění, úpravy textu, umím / neumím), se ukládá jen v tomhle prohlížeči na tomhle zařízení. <b>Občas si stáhni zálohu</b> – obsahuje všechno z obou stránek; na jiném zařízení nebo po smazání dat ji nahraješ zpět.</p>
       <div class="actions">
         <button id="bExport">Stáhnout zálohu</button>
         <button id="bImport">Nahrát zálohu</button>
@@ -348,6 +348,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
 
 <script src="rozbory-data.js"></script>
 <script src="psani.js"></script>
+<script src="zaloha.js"></script>
 <script>
 /* ---- karta „Moje četba“: 20 děl ze školního seznamu ---- */
 (function(){
@@ -462,6 +463,7 @@ const ERAS=[
  {n:"Henrik Ibsen",d:"1828–1906",t:"Norský autor **problémového (realistického) dramatu**. Nora odchází z manželství.",w:[["Domeček pro panenku (Nora)","d","B",1],["Strašidla","d","B"]]},
  {n:"Jules Verne",d:"1828–1905",t:"Dobrodružné a vědecko-fantastické romány – předchůdce **sci-fi**.",w:[["Dvacet tisíc mil pod mořem","p","B",1],["Cesta kolem světa za 80 dní","p","B"]]},
  {n:"Émile Zola",d:"1840–1902",t:"**Hlavní představitel naturalismu**, cyklus Rougon-Macquartové; v aféře Dreyfus napsal Žaluji!",w:[["Zabiják","p","B",1],["Nana","p","B"],["Germinal","p","B"]]},
+ {n:"Guy de Maupassant",d:"1850–1893",t:"Francouz, žák **Flauberta**, člen Médanské skupiny kolem Zoly; **mistr krátké povídky** s pointou. Kulička – **pokrytectví měšťanů** k prostitutce za prusko-francouzské války; Miláček – bezohledný **kariérista** Georges Duroy v pařížském tisku.",w:[["Kulička","p","B",1],["Miláček","p","B",1],["Jeden život","p","B"],["Horla","p","B"]]},
  {n:"Anton Pavlovič Čechov",d:"1860–1904",t:"Ruský dramatik a povídkář; děj potlačen, důležitá **nálada a podtext**.",w:[["Višňový sad","d","B",1],["Racek","d","B"],["Tři sestry","d","B"],["Povídky","p","B"]]},
  {g:"Česká literatura – mezi romantismem a realismem",n:"Božena Němcová",d:"1820–1862",t:"Zakladatelka **moderní české prózy**. Babička (**1855**) – idealizovaný obraz venkova, Staré bělidlo, Viktorka.",w:[["Babička","p","B",1],["Divá Bára","p","B"],["Pohorská vesnice","p","B"],["Národní báchorky a pověsti","p","B"]]},
  {n:"Karel Havlíček Borovský",d:"1821–1856",t:"**Zakladatel české žurnalistiky** a satiry, mistr **epigramu**; za novinářskou činnost poslán do vyhnanství v **Brixenu**.",w:[["Tyrolské elegie","po","B",1],["Král Lávra","po","B"],["Křest svatého Vladimíra","po","B"],["Epigramy","po","B"]]},
@@ -498,7 +500,9 @@ const ERAS=[
  {n:"Michail Bulgakov",d:"1891–1940",t:"Mistr a Markétka – **ďábel Woland** v Moskvě, paralelní příběh Piláta.",w:[["Mistr a Markétka","p","C",1],["Psí srdce","p","C"]]},
  {n:"Alexandr Solženicyn",d:"1918–2008",t:"Svědectví o **gulagu**, Nobelova cena 1970, vyhoštěn ze SSSR.",w:[["Jeden den Ivana Děnisoviče","p","C",1],["Souostroví Gulag","p","C"]]},
  {g:"Ztracená generace a americká próza",n:"Erich Maria Remarque",d:"1898–1970",t:"Němec, sám bojoval v 1. světové válce.",w:[["Na západní frontě klid","p","C",1],["Tři kamarádi","p","C"],["Vítězný oblouk","p","C"]]},
+ {n:"Romain Rolland",d:"1866–1944",t:"Francouzský **pacifista** a humanista, **Nobelova cena 1915**; za války ve Švýcarsku. Petr a Lucie – láska dvou mladých v Paříži 1918, zahynou o Velkém pátku při ostřelování kostela.",w:[["Petr a Lucie","p","C",1],["Jan Kryštof","p","C"],["Dobrý člověk ještě žije","p","C"]]},
  {n:"Ernest Hemingway",d:"1899–1961",t:"**Ztracená generace**, Nobelova cena 1954, úsporný styl – **teorie ledovce**.",w:[["Stařec a moře","p","C",1],["Sbohem, armádo!","p","C"],["Komu zvoní hrana","p","C"]]},
+ {n:"Francis Scott Fitzgerald",d:"1896–1940",t:"**Ztracená generace**, „hlas **jazzového věku**“ (sám pojem vymyslel); kritika **amerického snu**. Velký Gatsby – boháč Gatsby touží získat zpět Daisy, vypráví soused **Nick Carraway**.",w:[["Velký Gatsby","p","C",1],["Na prahu ráje","p","C"],["Něžná je noc","p","C"]]},
  {n:"John Steinbeck",d:"1902–1968",t:"Kalifornie, sociální romány o chudých.",w:[["O myších a lidech","p","C",1],["Hrozny hněvu","p","C"],["Na východ od ráje","p","C"]]},
  {g:"Antiutopie",n:"George Orwell",d:"1903–1950",t:"Angličan, bojoval ve **Španělsku**. Farma zvířat – **alegorie** na stalinismus. 1984 – **antiutopie**, Velký bratr, newspeak.",w:[["Farma zvířat","p","C",1],["1984","p","C",1]]},
  {g:"Existencialismus a absurdní drama",n:"Albert Camus",d:"1913–1960",t:"**Existencialismus**, Nobelova cena 1957. Cizinec – lhostejný Meursault.",w:[["Cizinec","p","C",1],["Mor","p","C"]]},
@@ -543,7 +547,7 @@ const ERAS=[
  {n:"Pavel Kohout",d:"nar. 1928",t:"Od budovatelské poezie k reformnímu komunismu, disent, **vyhoštěn 1979**.",w:[["Taková láska","d","D",1],["Katyně","p","D"],["Kde je zakopán pes","p","D"]]},
  {n:"Milan Kundera",d:"1929–2023",t:"**Emigrace do Francie (1975)**, později psal francouzsky; ironie, filozofické úvahy. Žert (**1967**) – absurdita 50. let, vyprávěno **z pohledu více postav**.",w:[["Žert","p","D",1],["Nesnesitelná lehkost bytí","p","D",1],["Směšné lásky","p","D"],["Valčík na rozloučenou","p","D"],["Nesmrtelnost","p","D"],["Jakub a jeho pán","d","D"]]},
  {n:"Ota Pavel",d:"1930–1973",t:"Sportovní novinář, **autobiografické** povídky o tatínkovi a rybách.",w:[["Smrt krásných srnců","p","D",1],["Jak jsem potkal ryby","p","D"]]},
- {n:"Zdeněk Svěrák – Ladislav Smoljak",d:"nar. 1936 / 1931–2010",t:"**Divadlo Járy Cimrmana** (1967) – mystifikace o fiktivním géniovi, **seminář + hra**.",w:[["Záskok","d","D",1],["Vražda v salonním coupé","d","D"],["Dobytí severního pólu","d","D"],["Posel z Liptákova","d","D"]]},
+ {n:"Zdeněk Svěrák – Ladislav Smoljak",d:"nar. 1936 / 1931–2010",t:"**Divadlo Járy Cimrmana** (1967) – mystifikace o fiktivním géniovi, **seminář + hra**.",w:[["Záskok","d","D",1],["Vražda v salonním coupé","d","D"],["Dobytí severního pólu","d","D"],["České nebe","d","D"],["Posel z Liptákova","d","D"]]},
  {n:"Vladimír Páral",d:"nar. 1932",t:"**Experimentální** romány, **satira** na stereotyp konzumního života.",w:[["Katapult","p","D",1],["Milenci a vrazi","p","D"],["Soukromá vichřice","p","D"]]},
  {n:"Josef Topol",d:"1935–2015",t:"Dramatik Divadla za branou (O. Krejča), poetické drama.",w:[["Konec masopustu","d","D",1],["Kočka na kolejích","d","D"],["Hlasy ptáků","d","D"]]},
  {n:"Václav Havel",d:"1936–2011",t:"**Absurdní drama** (Divadlo Na zábradlí), mluvčí **Charty 77**, vězněn, **prezident** 1989–2003.",w:[["Zahradní slavnost","d","D",1],["Audience","d","D",1],["Vyrozumění","d","D"],["Largo desolato","d","D"],["Moc bezmocných","p","D"]]}
@@ -881,9 +885,7 @@ function download(name,text,type){
 }
 function msg(t){const m=document.getElementById("nMsg");m.textContent=t;m.hidden=false;setTimeout(()=>m.hidden=true,3000)}
 const today=()=>new Date().toISOString().slice(0,10);
-document.getElementById("bExport").addEventListener("click",()=>{
-  download(`maturita-literatura-zaloha-${today()}.json`,JSON.stringify({app:"lit-hist",v:6,notes,lvl,hl:hls,text:TE.edits},null,1),"application/json");
-});
+document.getElementById("bExport").addEventListener("click",()=>Zaloha.export());
 document.getElementById("bTxt").addEventListener("click",()=>{
   let t="MOJE POZNÁMKY – LITERÁRNÍ HISTORIE\n";
   if(notes["gen:obecne"])t+=`\n== Obecné poznámky ==\n${notes["gen:obecne"]}\n`;
@@ -909,12 +911,7 @@ const fi=document.getElementById("fImport");
 document.getElementById("bImport").addEventListener("click",()=>fi.click());
 fi.addEventListener("change",()=>{
   const f=fi.files[0];if(!f)return;
-  f.text().then(t=>{
-    const d=JSON.parse(t);if(d.app!=="lit-hist")throw 0;
-    const n=Object.keys(d.notes||{}).length;
-    if(!confirm(`Záloha obsahuje ${n} poznámek. Nahradit tím současná data?`))return;
-    notes=d.notes||{};lvl=d.lvl||Object.fromEntries((d.known||[]).map(n=>[n,"ok"]));if(d.hl){hls=d.hl;storeHl();paintAllHl();}if(d.text){TE.edits=d.text;TE.store();setTimeout(()=>location.reload(),800);}saveNotes();saveKnown();renderNotes();renderKnown();msg("Záloha nahrána.");
-  }).catch(()=>msg("Tohle není záloha z tohoto souboru.")).finally(()=>fi.value="");
+  Zaloha.import(f).catch(()=>msg("Tohle není záloha z této stránky.")).finally(()=>fi.value="");
 });
 document.getElementById("nlist").addEventListener("click",ev=>{
   const g=ev.target.closest("[data-goto]");if(!g)return;ev.preventDefault();

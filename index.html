@@ -118,6 +118,59 @@ main{max-width:1100px;margin:0 auto;padding:0 20px 120px}
 .nlist .it div{white-space:pre-wrap;margin-top:4px;color:var(--ink)}
 .nlist h3{font-size:13px;color:var(--muted);font-weight:600;margin:16px 0 0}
 
+/* known + progress */
+.kbtn{margin-top:6px;margin-right:6px;border:1px solid var(--rule);background:none;border-radius:999px;padding:3px 11px;font-family:var(--sans);font-size:12.5px;color:var(--muted);cursor:pointer}
+.au.known .kbtn{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.au.known .nm::after{content:" ✓";color:var(--ok);font-variant:normal}
+.prog{font-family:var(--sans);font-size:13px;color:var(--muted);grid-column:2}
+.pbar{margin:14px 0 4px;max-width:520px;font-family:var(--sans);font-size:13.5px}
+.pbar .tr{height:8px;background:var(--rule);border-radius:4px;overflow:hidden;margin-top:6px}
+.pbar .fl{height:100%;background:var(--ok);width:0;transition:width .4s}
+.pbtn{border:0;background:var(--note-line);color:#fff;border-radius:999px;padding:8px 15px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer}
+
+/* theory */
+.figs{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.fig{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:12px 14px}
+.fig b{font-variant:small-caps;font-size:18px}
+.fig .df{font-family:var(--sans);font-size:14px;color:var(--muted);margin:2px 0 6px}
+.fig .ex{font-style:italic;border-left:3px solid var(--hl);padding-left:10px}
+.th{font-family:var(--sans);font-weight:600;font-size:15px;margin:26px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--c)}
+.tbl{overflow-x:auto}
+.tbl table{border-collapse:collapse;width:100%;font-size:15.5px}
+.tbl th,.tbl td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+.tbl th{font-family:var(--sans);font-size:13px;color:var(--muted);font-weight:600}
+.tbl code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--hl-soft);padding:1px 6px;border-radius:3px}
+
+/* practice overlay */
+.pov{position:fixed;inset:0;z-index:50;background:var(--paper);overflow-y:auto;display:none}
+.pov.open{display:block}
+.pov .in{max-width:600px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top,0px)) 20px calc(40px + env(safe-area-inset-bottom,0px));font-family:var(--sans)}
+.pov .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.pov h2{font-family:var(--serif);font-size:30px;margin:0}
+.pov .x{border:1px solid var(--rule);background:var(--card);border-radius:999px;width:38px;height:38px;font-size:18px;cursor:pointer}
+.pov label{display:block;font-weight:600;font-size:14px;margin:16px 0 6px}
+.pov select{width:100%;padding:11px 12px;border-radius:8px;border:1px solid var(--rule);background:var(--card);color:var(--ink);font:inherit;font-size:16px}
+.pov .go{margin-top:22px;width:100%;padding:14px;font-size:16px}
+.pov .meta{display:flex;justify-content:space-between;color:var(--muted);font-size:13.5px}
+.pov .meta .tr{flex:1;height:6px;background:var(--rule);border-radius:3px;margin:7px 12px 0;overflow:hidden}
+.pov .meta .fl{height:100%;background:var(--note-line)}
+.pov .q{font-family:var(--serif);font-size:22px;line-height:1.35;margin:20px 0 6px}
+.pov .sub{font-family:var(--serif);font-style:italic;font-size:17px;background:var(--card);border-left:4px solid var(--hl);padding:10px 14px;margin:10px 0 4px;border-radius:4px}
+.pov .opts{display:grid;gap:8px;margin-top:18px}
+.pov .opt{text-align:left;border:1.5px solid var(--rule);background:var(--card);border-radius:10px;padding:13px 15px;font-size:16px;cursor:pointer;font-family:var(--serif)}
+.pov .opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--card))}
+.pov .opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--card))}
+.pov .opt:disabled{cursor:default;color:var(--ink)}
+.pov .fb{margin-top:16px;padding:12px 14px;border-radius:8px;background:var(--card);border:1px solid var(--rule);font-family:var(--serif);font-size:16px}
+.pov .fb b{font-family:var(--sans)}
+.pov .score{font-family:var(--serif);font-size:56px;font-weight:800;margin:10px 0 0}
+.pov .mist{margin-top:16px}
+.pov .mist div{padding:10px 0;border-bottom:1px solid var(--rule);font-size:14.5px}
+.pov .mist a{color:var(--note-ink)}
+.pov .row2{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+.pov .row2 button{flex:1}
+.pov .ghost{border:1px solid var(--rule);background:var(--card);border-radius:999px;padding:12px 15px;cursor:pointer;font-size:15px}
+
 /* modes */
 body.only-mine .au:not(.has-mine){display:none}
 body.only-mine .era.no-mine{display:none}
@@ -163,7 +216,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 @media print{
-  .bar,.fab,.drawer,.nbtn,.ned{display:none!important}
+  .bar,.fab,.drawer,.nbtn,.ned,.kbtn,.pov,.pbar{display:none!important}
   .mynote{background:none;border-left:2px solid #555}
   body{font-size:11.5pt;background:#fff;color:#000}
   body.quiz .au .tx,body.quiz .au .works{filter:none}
@@ -183,6 +236,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
     <span><i class="sw hl"></i> nejdůležitější – v testech se objevuje nejčastěji</span>
     <span><i class="sw mine"></i> dílo z mého maturitního seznamu</span>
   </div>
+  <div class="pbar"><span id="pTxt">Umím 0 autorů</span><div class="tr"><div class="fl" id="pFill"></div></div></div>
   <nav class="ribbon" id="ribbon" aria-label="Časová osa epoch"></nav>
 </header>
 
@@ -193,6 +247,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
       <button id="mMine" aria-pressed="false">Jen můj seznam</button>
       <button id="mQuiz" aria-pressed="false">Zkoušení</button>
     </div>
+    <button class="pbtn" id="practice">Procvičovat</button>
     <input class="search" id="q" type="search" placeholder="Hledat autora, dílo, pojem…" aria-label="Hledat">
     <nav class="jump" id="jump" aria-label="Přejít na epochu"></nav>
   </div>
@@ -204,6 +259,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
   Zdroj požadavků: Katalog požadavků zkoušek společné části maturitní zkoušky – Český jazyk a literatura (CZVV/CERMAT, platný od 2017/2018), část A 1.8 a část C. Katalog z roku 2016 (platný od 2017/2018) je podle CERMATu stále platný pro didaktický test; nezávislá komise potvrdila soulad testů z jara i podzimu 2025 právě s ním. Části o ústní zkoušce a písemné práci od 2020/2021 neplatí – kritéria seznamu četby stanovuje ředitel školy, proto si je ověř u své školy.
 </footer>
 
+<div class="pov" id="pov" role="dialog" aria-modal="true" aria-label="Procvičování"><div class="in" id="povIn"></div></div>
 <button class="fab" id="fab" aria-haspopup="dialog">Seznam <b id="fabN">0</b> &nbsp;Poznámky <b id="fabNotes">0</b></button>
 
 <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle">
@@ -432,6 +488,48 @@ const GENRES=[
 ["anekdota","krátký vtipný příběh s pointou"],["bajka","zvířata s lidskými vlastnostmi, **ponaučení** (Ezop)"],["balada","epická báseň s ponurým dějem a **tragickým koncem** (Erben)"],["cestopis","vyprávění o skutečné cestě"],["elegie","**smutná, žalozpěvná** báseň (Orten)"],["epigram","krátká **satirická** báseň s pointou (Havlíček)"],["epos","rozsáhlé veršované vyprávění o hrdinech (Ilias)"],["fantasy","vymyšlený svět s magií a bytostmi"],["kaligram","báseň, jejíž **text tvoří obrázek** (Apollinaire)"],["komedie","drama se šťastným koncem, výsměch vadám (Molière)"],["kronika","záznam událostí v časovém pořadí (Kosmas)"],["legenda","vyprávění o **životě svatých** (Kristiánova legenda)"],["mýtus","příběh o bozích a vzniku světa"],["novela","kratší než román, **jedna dějová linie a pointa** (Krysař)"],["óda","**oslavná** báseň"],["pásmo","volné řazení obrazů a asociací (Apollinaire, Nezvalův Edison)"],["píseň","zpěvná lyrická báseň"],["poema","rozsáhlá **lyrickoepická** báseň (Máj)"],["pohádka","fantastický příběh, dobro vítězí nad zlem"],["pověst","fantazie vázaná na **skutečné místo či osobu** (Jirásek)"],["povídka","kratší próza s jednoduchým dějem"],["román","rozsáhlá próza, **více dějových linií** a postav"],["romance","lyrickoepická báseň s **veselým nebo milostným** dějem (Neruda)"],["sci-fi","vědecko-fantastická literatura (Verne, Čapek)"],["sonet","**14 veršů: 2 čtyřverší + 2 trojverší** (Petrarca, Shakespeare)"],["tragédie","střet hrdiny s přesilou, končí jeho **pádem** (Sofoklés)"]
 ];
 
+const FIGS=[
+["alegorie","jinotaj – celý příběh má skrytý, přenesený význam","Farma zvířat (zvířata = stalinský režim); Komenského Labyrint světa"],
+["aliterace","opakování stejných hlásek na začátku slov","šedé šero šeptá"],
+["anafora","opakování slova na začátku veršů či vět","tam všecko jedno… / tam není chvíl (K. H. Mácha, Máj)"],
+["apostrofa","oslovení nepřítomné osoby, věci nebo abstraktního pojmu","Ó lásko, proč jsi odešla?"],
+["dysfemismus","záměrně zhrubělé pojmenování (opak eufemismu)","chcípnout místo zemřít"],
+["elipsa","výpustka – vynechání části výpovědi, kterou si domyslíme","Já ti dám!"],
+["epifora","opakování slova na konci veršů či vět","…a byla noc. / …zas byla noc."],
+["epizeuxis","opakování téhož slova bezprostředně za sebou","tam žádný – žádný – žádný svit (Máj)"],
+["eufemismus","zjemnění nepříjemné skutečnosti","odešel na věčnost (= zemřel)"],
+["gradace","stupňování významu","přišel, viděl, zvítězil"],
+["hyperbola","nadsázka, zveličení","říkal jsem ti to snad tisíckrát"],
+["inverze","obrácený (neobvyklý) slovosled","duše má zpívá (místo má duše)"],
+["metafora","přenesení pojmenování na základě vnější podobnosti","noha stolu, zub pily, moře lidí"],
+["metonymie","přenesení na základě vnitřní souvislosti (autor za dílo, místo za lidi…)","čtu Máchu; celá třída se smála"],
+["oxymóron","spojení slov s protikladným významem","směji se v pláči (Villon); živá mrtvola"],
+["personifikace","zosobnění – věci a zvířata jednají jako lidé","vítr zpívá, les šeptá"],
+["přirovnání","srovnání pomocí jako, jak","nahý jak červ (Villon)"],
+["řečnická otázka","otázka, na kterou se nečeká odpověď","Kdo by to byl řekl?"],
+["symbol","ustálený obraz s hlubším, obecně známým významem","holubice = mír, kříž = utrpení, víra"],
+["synekdocha","část za celek nebo celek za část","nemít střechu nad hlavou (= domov); na hlavu 100 Kč"]
+];
+const SMERY=[
+["renesance","Návrat k antice, v centru člověk a jeho pozemský život, rozvoj vědy a knihtisku."],
+["baroko","Doba náboženských střetů, citovost, mystičnost, kontrasty, pomíjivost, náboženské látky."],
+["klasicismus","Rozum a pravidla, vzor antika, trojí jednota, žánry vysoké a nízké, nejprestižnější je tragédie."],
+["romantismus","Cit a fantazie místo rozumu, hrdina vyděděnec v rozporu se světem, nenaplněná láska, obdiv ke středověku."],
+["realismus","Objektivní zobrazení skutečnosti, typické postavy v typickém prostředí, kritika společnosti."],
+["naturalismus","Člověka určuje dědičnost, prostředí a pudy; autor jevy chladně registruje."],
+["impresionismus","Zachycuje prchavý dojem a náladu okamžiku, barvy, zvuky, vůně; příroda zrcadlí duši."],
+["symbolismus","Skutečnost vyjádřena náznakem a symboly, důraz na hudebnost verše a duchovno."],
+["dekadence","Pocit úpadku a únavy, smrt, morbidnost, estétství."],
+["expresionismus","Vyjádření úzkosti a vnitřního napětí, deformace skutečnosti, odcizení."],
+["futurismus","Oslava rychlosti, techniky, velkoměsta a budoucnosti, odmítnutí tradice."],
+["dadaismus","Výsměch umění, nesmysl, náhoda, hra se slovy."],
+["surrealismus","Sen, podvědomí, volné asociace, automatický text."],
+["poetismus","Český směr Devětsilu – radost, hra, fantazie, umění žít a užívat."],
+["existencialismus","Člověk je vržen do světa bez smyslu, je svobodný a odpovědný, absurdita existence."],
+["magický realismus","Zázračné a fantastické události jako samozřejmá součást reality."],
+["postmodernismus","Hra se čtenářem, intertextualita, mísení žánrů a stylů."],
+["socialistický realismus","Umění ve službách strany, kladný hrdina, povinný optimismus, budování socialismu."]
+];
 const PAIRS=[
 ["Hrabal × Škvorecký × Kundera","Hrabal – **pábitelé**, proud řeči, neemigroval. Škvorecký – **Zbabělci**, jazz, exil **Toronto**. Kundera – **Žert**, exil **Francie**, více vypravěčů."],
 ["Fuks × Lustig","Oba píšou o holocaustu. Fuks – **úzkost, psychologie**, Spalovač mrtvol. Lustig – sám přežil tábory, **hrdinky ženy**, emigroval do USA."],
@@ -466,14 +564,14 @@ document.getElementById("ribbon").innerHTML=ERAS.map(e=>`<a href="#${e.id}" styl
 let html="";
 ERAS.forEach(e=>{
   html+=`<section class="era" id="${e.id}" style="--c:${e.c}">
-  <div class="era-head"><span class="stripe"></span><h2>${e.name}</h2><span class="yrs">${e.yrs}</span></div>
+  <div class="era-head"><span class="stripe"></span><h2>${e.name}</h2><span class="yrs">${e.yrs}</span><span class="prog" data-prog="${e.id}"></span></div>
   <p class="ctx">${e.ctx}</p>
   <div class="traits"><h3>Poznávací znaky – musíš je umět přiřadit k ukázce</h3><ul>${e.tr.map(t=>`<li>${md(t)}</li>`).join("")}</ul></div>
   <div class="enote" data-nk="era:${e.id}"><button class="nbtn">✎ Moje poznámky k epoše</button><div class="mynote"></div></div>`;
   e.au.forEach(a=>{
     if(a.g) html+=`<div class="grp">${a.g}${a.gn?`<small>${a.gn}</small>`:""}</div>`;
     html+=`<article class="au" data-nk="au:${esc(a.n)}" data-au="${esc(a.n)}" data-s="${esc((a.n+" "+a.t+" "+a.w.map(w=>w[0]).join(" ")).toLowerCase())}">
-      <div><div class="nm">${a.n}</div><div class="dt">${a.d}</div><span class="badge">★ v mém seznamu</span><br><button class="nbtn">✎ Poznámka</button></div>
+      <div><div class="nm">${a.n}</div><div class="dt">${a.d}</div><span class="badge">★ v mém seznamu</span><br><button class="kbtn">✓ Umím</button><button class="nbtn">✎ Poznámka</button></div>
       <div><p class="tx">${md(a.t)}</p><div class="works">${a.w.map(w=>{
         const id=a.n+"|"+w[0];
         return `<button class="w${w[3]?" key":""}" data-id="${esc(id)}" aria-pressed="false"><span class="st">★</span>${w[0]}<span class="k">${DRUH[w[1]]}</span></button>`;
@@ -487,6 +585,39 @@ html+=`<section class="era" id="zanry" style="--c:#888">
 <p class="ctx">V testu je musíš poznat z ukázky nebo doplnit do textu (např. „dávná mayská ___“ → pověst).</p>
 <div class="genres">${GENRES.map(g=>`<div><b>${g[0]}</b> – <span>${md(g[1])}</span></div>`).join("")}</div></section>
 
+<section class="era" id="teorie" style="--c:#5677D6">
+<div class="era-head"><span class="stripe"></span><h2>Literární teorie</h2><span class="yrs">v testu ve stejném bloku jako historie</span></div>
+<p class="ctx">Katalog 1.9 – v testu je musíš najít v ukázce. Příklady si vymysli i vlastní, nejlépe se tak pamatují.</p>
+<div class="th">Tropy a figury – všech 20 z katalogu</div>
+<div class="figs">${FIGS.map(f=>`<div class="fig"><b>${f[0]}</b><div class="df">${f[1]}</div><div class="ex">${f[2]}</div></div>`).join("")}</div>
+<p class="note" style="font-family:var(--sans);margin-top:10px">Tropy mění význam slova (metafora, metonymie, synekdocha, personifikace, hyperbola…); figury pracují s uspořádáním slov a zvukem (anafora, epifora, epizeuxis, inverze, aliterace, gradace, elipsa).</p>
+<div class="th">Rýmová schémata</div>
+<div class="tbl"><table><tr><th>Rým</th><th>Schéma</th><th>Jak poznat</th></tr>
+<tr><td><b>sdružený</b></td><td><code>AABB</code></td><td>rýmují se dva verše za sebou</td></tr>
+<tr><td><b>střídavý</b></td><td><code>ABAB</code></td><td>rýmuje se ob jeden verš</td></tr>
+<tr><td><b>obkročný</b></td><td><code>ABBA</code></td><td>krajní verše obepínají vnitřní dvojici</td></tr>
+<tr><td><b>přerývaný</b></td><td><code>ABCB</code></td><td>rýmuje se jen 2. a 4. verš</td></tr></table></div>
+<div class="th">Verš</div>
+<div class="tbl"><table><tr><td><b>vázaný verš</b></td><td>pravidelný rytmus (stopy), většinou i rým</td></tr>
+<tr><td><b>volný verš</b></td><td>bez pravidelného rytmu a rýmu, verše různě dlouhé (Whitman, Apollinaire)</td></tr></table></div>
+<div class="th">Typy promluv</div>
+<div class="tbl"><table><tr><th>Typ</th><th>Poznávací znak</th><th>Příklad</th></tr>
+<tr><td><b>přímá řeč</b></td><td>v uvozovkách, uvozovací věta</td><td>„Půjdu domů,“ řekla.</td></tr>
+<tr><td><b>nepřímá řeč</b></td><td>vedlejší věta, slova postavy převyprávěná vypravěčem</td><td>Řekla, že půjde domů.</td></tr>
+<tr><td><b>polopřímá řeč</b></td><td>myšlenky postavy ve 3. osobě, bez uvozovek, splývá s textem vypravěče</td><td>Půjde domů. Proč by tu ještě zůstávala?</td></tr>
+<tr><td><b>neznačená přímá řeč</b></td><td>slova postavy v 1. osobě, ale bez uvozovek</td><td>Zatracený Basil! Opět zrazen!</td></tr></table></div>
+<div class="th">Vypravěč a literární druhy</div>
+<div class="tbl"><table>
+<tr><td><b>er-forma</b></td><td>vypravěč ve 3. osobě, stojí mimo děj (vševědoucí nebo nezúčastněný)</td></tr>
+<tr><td><b>ich-forma</b></td><td>vypravěč v 1. osobě, sám se účastní děje (Robinson Crusoe)</td></tr>
+<tr><td><b>vnitřní monolog</b></td><td>myšlenky postavy zachycené přímo; <b>proud vědomí</b> = bez logického uspořádání (Joyce)</td></tr>
+<tr><td><b>lyrika</b></td><td>pocity a nálady, lyrický subjekt, bez děje</td></tr>
+<tr><td><b>epika</b></td><td>děj, vypravěč, postavy</td></tr>
+<tr><td><b>drama</b></td><td>určeno k předvedení, dialog a monolog, scénické poznámky</td></tr>
+<tr><td><b>autor × vypravěč × lyrický subjekt</b></td><td>autor je skutečný člověk; vypravěč a lyrický subjekt jsou jím vytvořené hlasy v textu</td></tr>
+</table></div>
+</section>
+
 <section class="era" id="plete" style="--c:#888">
 <div class="era-head"><span class="stripe"></span><h2>Pozor, plete se</h2><span class="yrs">dvojice, na kterých test rád chytá</span></div>
 <p class="ctx">Typická úloha: přiřaď charakteristiku k autorovi z nabídky 6 jmen. Rozhodují poznávací znamení – exil, skupina, Nobelova cena, téma.</p>
@@ -496,7 +627,7 @@ html+=`<section class="era" id="zanry" style="--c:#888">
 </section>`;
 main.innerHTML=html;
 
-document.getElementById("jump").innerHTML=ERAS.map(e=>`<a href="#${e.id}" data-era="${e.id}">${e.name}<span class="dot" hidden></span></a>`).join("")+`<a href="#zanry">Žánry</a><a href="#plete">Pozor, plete se</a>`;
+document.getElementById("jump").innerHTML=ERAS.map(e=>`<a href="#${e.id}" data-era="${e.id}">${e.name}<span class="dot" hidden></span></a>`).join("")+`<a href="#zanry">Žánry</a><a href="#teorie">Teorie</a><a href="#plete">Pozor, plete se</a>`;
 
 /* ===================== UPDATE ===================== */
 function update(){
@@ -507,7 +638,7 @@ function update(){
     sec.classList.toggle("no-mine",n===0);
     const dot=document.querySelector(`.jump a[data-era="${e.id}"] .dot`);dot.hidden=!n;dot.textContent=n;
   });
-  document.querySelectorAll("#zanry,#plete").forEach(s=>s.classList.add("no-mine"));
+  document.querySelectorAll("#zanry,#plete,#teorie").forEach(s=>s.classList.add("no-mine"));
   document.getElementById("fabN").textContent=mine.size+"/20";
   renderDrawer();
 }
@@ -535,6 +666,8 @@ function renderDrawer(){
 /* ===================== EVENTS ===================== */
 main.addEventListener("click",ev=>{
   if(ev.target.closest(".ned"))return;
+  const kb=ev.target.closest(".kbtn");
+  if(kb){const n=kb.closest(".au").dataset.au;known.has(n)?known.delete(n):known.add(n);saveKnown();renderKnown();return;}
   const nb=ev.target.closest(".nbtn");
   if(nb){openEditor(nb.closest("[data-nk]"));return;}
   const b=ev.target.closest(".w");
@@ -627,7 +760,7 @@ function download(name,text,type){
 function msg(t){const m=document.getElementById("nMsg");m.textContent=t;m.hidden=false;setTimeout(()=>m.hidden=true,3000)}
 const today=()=>new Date().toISOString().slice(0,10);
 document.getElementById("bExport").addEventListener("click",()=>{
-  download(`maturita-literatura-zaloha-${today()}.json`,JSON.stringify({app:"lit-hist",v:1,mine:[...mine],notes},null,1),"application/json");
+  download(`maturita-literatura-zaloha-${today()}.json`,JSON.stringify({app:"lit-hist",v:2,mine:[...mine],notes,known:[...known]},null,1),"application/json");
 });
 document.getElementById("bTxt").addEventListener("click",()=>{
   let t="MOJE POZNÁMKY – LITERÁRNÍ HISTORIE\n";
@@ -643,7 +776,7 @@ fi.addEventListener("change",()=>{
     const d=JSON.parse(t);if(d.app!=="lit-hist")throw 0;
     const n=Object.keys(d.notes||{}).length;
     if(!confirm(`Záloha obsahuje ${n} poznámek a ${(d.mine||[]).length} děl ze seznamu. Nahradit tím současná data?`))return;
-    notes=d.notes||{};mine=new Set(d.mine||[]);saveNotes();save();update();renderNotes();msg("Záloha nahrána.");
+    notes=d.notes||{};mine=new Set(d.mine||[]);known=new Set(d.known||[]);saveNotes();save();saveKnown();update();renderNotes();renderKnown();msg("Záloha nahrána.");
   }).catch(()=>msg("Tohle není záloha z tohoto souboru.")).finally(()=>fi.value="");
 });
 document.getElementById("nlist").addEventListener("click",ev=>{
@@ -657,6 +790,154 @@ Object.keys(tabs).forEach(t=>document.getElementById(t).addEventListener("click"
   Object.keys(tabs).forEach(k=>{document.getElementById(k).setAttribute("aria-selected",k===t);document.getElementById(tabs[k]).hidden=k!==t;});
 }));
 renderNotes();
+
+/* ===================== KNOWN ===================== */
+let known=new Set();
+try{const k=localStorage.getItem("lit-hist-known-v1");if(k)known=new Set(JSON.parse(k));}catch(e){}
+function saveKnown(){try{localStorage.setItem("lit-hist-known-v1",JSON.stringify([...known]));}catch(e){}}
+const TOTAL_AU=ERAS.reduce((n,e)=>n+e.au.length,0);
+function renderKnown(){
+  document.querySelectorAll(".au").forEach(a=>{const k=known.has(a.dataset.au);a.classList.toggle("known",k);a.querySelector(".kbtn").textContent=k?"✓ Umím":"Umím?";});
+  ERAS.forEach(e=>{const k=e.au.filter(a=>known.has(a.n)).length;document.querySelector(`[data-prog="${e.id}"]`).textContent=`umím ${k} z ${e.au.length}`;});
+  const k=[...known].filter(n=>AU_ERA[n]).length;
+  document.getElementById("pTxt").textContent=`Umím ${k} z ${TOTAL_AU} autorů (${Math.round(k/TOTAL_AU*100)} %)`;
+  document.getElementById("pFill").style.width=(k/TOTAL_AU*100)+"%";
+}
+renderKnown();
+
+/* ===================== PRACTICE ===================== */
+const AUS=[];ERAS.forEach((e,i)=>e.au.forEach(a=>AUS.push({...a,era:e.id,ei:i})));
+const ANON=new Set(["Epos o Gilgamešovi","Bible","Píseň o Rolandovi","Kristiánova legenda","Hospodine, pomiluj ny","Alexandreida","Kronika tak řečeného Dalimila","Mastičkář","Podkoní a žák","Rukopis královédvorský a zelenohorský"]);
+const ERA_AMBIG=new Set(["Johann Wolfgang Goethe","Walt Whitman","Jane Austenová","Charles Baudelaire","Božena Němcová","Karel Havlíček Borovský","Dante Alighieri","Jan Amos Komenský","François Villon"]);
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=a=>a[Math.random()*a.length|0];
+const strip=s=>s.replace(/\*\*/g,"");
+const mainCat=a=>a.w[0][2];
+function distract(correct,pool,n=3){return shuf(pool.filter(x=>x!==correct&&!correct.split(" / ").includes(x))).filter((x,i,arr)=>arr.indexOf(x)===i).slice(0,n)}
+function qWho(a){
+  const w=pick(a.w.filter(x=>x[3]).length?a.w.filter(x=>x[3]):a.w);
+  const same=AUS.filter(x=>!ANON.has(x.n)&&x.n!==a.n&&mainCat(x)===mainCat(a)).map(x=>x.n);
+  const opts=shuf([a.n,...distract(a.n,same)]);
+  return {q:`Kdo napsal dílo ${w[0]}?`,opts,ok:a.n,expl:a.t,nk:"au:"+a.n,lab:a.n};
+}
+function qWork(a){
+  const w=pick(a.w.filter(x=>x[3]).length?a.w.filter(x=>x[3]):a.w);
+  const others=AUS.filter(x=>x.n!==a.n&&mainCat(x)===mainCat(a)).flatMap(x=>x.w.map(y=>y[0]));
+  const opts=shuf([w[0],...distract(w[0],others)]);
+  return {q:`Které z těchto děl napsal(a) ${a.n}?`,opts,ok:w[0],expl:a.t,nk:"au:"+a.n,lab:a.n};
+}
+function qEra(a){
+  const far=ERAS.filter((e,i)=>Math.abs(i-a.ei)>1).map(e=>e.name);
+  const ok=ERAS[a.ei].name;
+  return {q:`Do které epochy patří ${a.n}?`,sub:a.w.slice(0,2).map(w=>w[0]).join(", "),opts:shuf([ok,...distract(ok,far)]),ok,expl:a.t,nk:"au:"+a.n,lab:a.n};
+}
+function qChar(a){
+  let t=strip(a.t);
+  const parts=a.n.split(/[ –]+/).filter(p=>p.length>2);
+  parts.forEach(p=>{t=t.split(p).join("___")});
+  a.w.forEach(w=>{t=t.split(w[0]).join("___")});
+  const same=AUS.filter(x=>!ANON.has(x.n)&&x.n!==a.n&&mainCat(x)===mainCat(a)).map(x=>x.n);
+  return {q:"Kterého autora popisuje charakteristika?",sub:t,opts:shuf([a.n,...distract(a.n,same)]),ok:a.n,expl:"Klíčová díla: "+a.w.slice(0,3).map(w=>w[0]).join(", "),nk:"au:"+a.n,lab:a.n};
+}
+function qSmer(){
+  const s=pick(SMERY);
+  return {q:"Který směr je popsán?",sub:s[1],opts:shuf([s[0],...distract(s[0],SMERY.map(x=>x[0]))]),ok:s[0],expl:"",nk:null,lab:s[0]};
+}
+function qFig(){
+  const f=pick(FIGS);const ex=f[2].split(";")[0].replace(/\s*\(.*?\)\s*$/,"");
+  return {q:"Který trop nebo figura se uplatňuje v ukázce?",sub:ex,opts:shuf([f[0],...distract(f[0],FIGS.map(x=>x[0]))]),ok:f[0],expl:f[0]+" – "+f[1],nk:null,lab:f[0]};
+}
+function qGenre(){
+  const g=pick(GENRES);
+  return {q:"Který žánr je popsán?",sub:strip(g[1]).replace(/\s*\(.*?\)\s*$/,""),opts:shuf([g[0],...distract(g[0],GENRES.map(x=>x[0]))]),ok:g[0],expl:g[0]+" – "+strip(g[1]),nk:null,lab:g[0]};
+}
+function genRound(scope,n=10){
+  let aus=AUS;
+  if(scope==="mine")aus=AUS.filter(a=>a.w.some(w=>mine.has(a.n+"|"+w[0])));
+  else if(scope==="unknown")aus=AUS.filter(a=>!known.has(a.n));
+  else if(ERA_NAME[scope])aus=AUS.filter(a=>a.era===scope);
+  const out=[],seen=new Set();
+  for(let t=0;out.length<n&&t<400;t++){
+    let q;
+    if(scope==="smery")q=qSmer();
+    else if(scope==="teorie")q=Math.random()<.6?qFig():qGenre();
+    else{
+      if(!aus.length)break;
+      const r=Math.random();
+      if(scope==="all"&&r<.12)q=qSmer();
+      else if(scope==="all"&&r<.2)q=qFig();
+      else{
+        const a=pick(aus),named=!ANON.has(a.n),k=Math.random();
+        if(!named)q=k<.5||ERA_AMBIG.has(a.n)?qWork(a):qEra(a);
+        else if(k<.33)q=qWho(a);else if(k<.58)q=qWork(a);else if(k<.8)q=qChar(a);
+        else q=ERA_AMBIG.has(a.n)?qWho(a):qEra(a);
+      }
+    }
+    if(!q||q.opts.length<3||seen.has(q.q+q.ok+(q.sub||"")))continue;
+    seen.add(q.q+q.ok+(q.sub||""));out.push(q);
+  }
+  return out;
+}
+const pov=document.getElementById("pov"),povIn=document.getElementById("povIn");
+let R=null;
+function povTop(t){return `<div class="top"><h2>${t}</h2><button class="x" data-pclose aria-label="Zavřít">×</button></div>`}
+function setup(){
+  const mineN=AUS.filter(a=>a.w.some(w=>mine.has(a.n+"|"+w[0]))).length;
+  povIn.innerHTML=povTop("Procvičování")+`
+  <p class="note" style="font-family:var(--sans)">Otázky ve stylu didaktického testu. Každé kolo má 10 otázek.</p>
+  <label for="pScope">Z čeho</label>
+  <select id="pScope">
+    <option value="all">Všechno (autoři, díla, směry, figury)</option>
+    <option value="mine"${mineN?"":" disabled"}>Jen autoři z mého seznamu${mineN?` (${mineN})`:" – zatím nic nevybráno"}</option>
+    <option value="unknown">Jen autoři, které ještě neumím</option>
+    <option value="smery">Literární směry podle popisu</option>
+    <option value="teorie">Tropy, figury a žánry</option>
+    <optgroup label="Jedna epocha">${ERAS.map(e=>`<option value="${e.id}">${e.name}</option>`).join("")}</optgroup>
+  </select>
+  <button class="pbtn go" id="pGo">Začít</button>`;
+}
+function showQ(){
+  const q=R.qs[R.i];
+  povIn.innerHTML=povTop("Procvičování")+`
+  <div class="meta"><span>${R.i+1} / ${R.qs.length}</span><div class="tr"><div class="fl" style="width:${R.i/R.qs.length*100}%"></div></div><span>${R.ok} ✓</span></div>
+  <div class="q">${esc(q.q)}</div>${q.sub?`<div class="sub">${esc(q.sub)}</div>`:""}
+  <div class="opts">${q.opts.map((o,i)=>`<button class="opt" data-o="${i}">${esc(o)}</button>`).join("")}</div>
+  <div id="pFb"></div>`;
+}
+function answer(i){
+  const q=R.qs[R.i],btns=povIn.querySelectorAll(".opt"),chosen=q.opts[i],good=chosen===q.ok;
+  btns.forEach((b,j)=>{b.disabled=true;if(q.opts[j]===q.ok)b.classList.add("ok");else if(j===i)b.classList.add("bad")});
+  if(good)R.ok++;else R.wrong.push({q,chosen});
+  document.getElementById("pFb").innerHTML=`<div class="fb"><b>${good?"Správně!":"Správně je: "+esc(q.ok)}</b>${q.expl?`<div style="margin-top:6px">${md(esc(q.expl))}</div>`:""}</div>
+  <button class="pbtn go" id="pNext">${R.i+1<R.qs.length?"Další otázka":"Výsledek"}</button>`;
+  document.getElementById("pNext").focus();
+}
+function result(){
+  const pct=Math.round(R.ok/R.qs.length*100);
+  povIn.innerHTML=povTop("Výsledek")+`
+  <div class="score">${R.ok} / ${R.qs.length}</div>
+  <p style="font-family:var(--serif);font-size:18px;margin:4px 0 0">${pct>=90?"Výborně, tohle umíš.":pct>=70?"Dobrý – ještě pár mezer.":pct>=44?"Na test by to stačilo, ale je co zlepšovat.":"Tohle si ještě projdi."}</p>
+  ${R.wrong.length?`<div class="mist"><b style="font-size:14px;color:var(--muted)">Chyby k zopakování</b>${R.wrong.map(w=>`<div>${esc(w.q.q)}${w.q.sub&&w.q.sub.length<90?` <i>(${esc(w.q.sub)})</i>`:""}<br>Tvoje odpověď: <s>${esc(w.chosen)}</s> → <b>${esc(w.q.ok)}</b>${w.q.nk?` · <a href="#" data-pgo="${esc(w.q.nk)}">ukázat v přehledu</a>`:""}</div>`).join("")}</div>`:""}
+  <div class="row2"><button class="pbtn" id="pAgain">Další kolo</button><button class="ghost" id="pSetup">Změnit téma</button></div>`;
+}
+function start(scope){
+  const qs=genRound(scope);
+  if(!qs.length){povIn.innerHTML=povTop("Procvičování")+`<p>Pro tenhle výběr zatím nejsou žádné otázky.</p><button class="ghost" id="pSetup">Zpět</button>`;return;}
+  R={scope,qs,i:0,ok:0,wrong:[]};showQ();
+}
+document.getElementById("practice").addEventListener("click",()=>{pov.classList.add("open");document.body.style.overflow="hidden";setup();});
+function closePov(){pov.classList.remove("open");document.body.style.overflow="";}
+povIn.addEventListener("click",ev=>{
+  if(ev.target.closest("[data-pclose]"))return closePov();
+  if(ev.target.id==="pGo")return start(document.getElementById("pScope").value);
+  const o=ev.target.closest(".opt");if(o&&!o.disabled)return answer(+o.dataset.o);
+  if(ev.target.id==="pNext"){R.i++;return R.i<R.qs.length?showQ():result();}
+  if(ev.target.id==="pAgain")return start(R.scope);
+  if(ev.target.id==="pSetup")return setup();
+  const g=ev.target.closest("[data-pgo]");
+  if(g){ev.preventDefault();closePov();document.getElementById("mAll").click();const el=document.querySelector(`[data-nk="${CSS.escape(g.dataset.pgo)}"]`);if(el){el.classList.remove("hide");el.scrollIntoView({block:"center"});}}
+});
+document.addEventListener("keydown",ev=>{if(ev.key==="Escape"&&pov.classList.contains("open"))closePov();});
 </script>
 </body>
 </html>

@@ -275,8 +275,15 @@ autori:[["Josef Čapek","malíř a spisovatel, *Povídání o pejskovi a kočič
 
 {no:15,cat:"D",au:"Karel Čapek",t:"Válka s mloky",orig:null,rok:"1936",
 forma:"próza",druh:"**epika**",zanr:"**román** – **antiutopie**, satirický, alegorický, vědeckofantastický",
-struktura:"**3 knihy**: 1. *Andrias Scheuchzeri*, 2. *Po stupních civilizace*, 3. *Válka s mloky*; poslední kapitola „**Autor mluví sám se sebou**“; **koláž** – vyprávění střídají novinové články, vědecké studie, protokoly, dopisy, poznámky pod čarou, i jiná písma a typy textů",
-postup:"převážně **chronologický**, ale fragmentární (montáž dokumentů); 2. kniha je souhrnem „dějin mloků“ z Povondrových výstřižků",
+struktura:[
+"**3 knihy** (části), dohromady **25 kapitol** s vlastními názvy; každá kniha má jiný styl a tempo",
+"**Kniha první – *Andrias Scheuchzeri*** (12 kapitol): objev mloků a začátek obchodu s nimi. Klasické **vyprávění s dialogy** a humorem – kapitán van Toch, Bondy, Povondra, novináři, filmaři na ostrově; končí založením **Salamander Syndicate**. Začíná kapitolou *Podivínství kapitána van Tocha*.",
+"**Kniha druhá – *Po stupních civilizace*** (3 kapitoly): rámec tvoří **pan Povondra, který čte noviny** a sbírá výstřižky (1. a 3. kapitola); prostřední kapitola *Po stupních civilizace (Dějiny mloků)* je dlouhá **montáž dokumentů** – novinové články, vědecké studie, reklamy, zápisy ze schůzí, ankety slavných lidí, **poznámky pod čarou**. Děj se tu nevypráví, ale skládá z textů.",
+"**Kniha třetí – *Válka s mloky*** (10 kapitol): rychlý spád katastrofy – **krátké kapitoly**, zprávy z tisku a rozhlasu, projevy **Chief Salamandra**, konference ve **Vaduzu**; vložené kapitoly s rodinou **Povondrových**. Poslední kapitola ***Autor mluví sám se sebou*** – autor diskutuje se svým „vnitřním hlasem“ o tom, jak román ukončit.",
+"Celek = **koláž (montáž) žánrů a stylů**: vyprávění, reportáž, vědecký výklad, publicistika, dokumenty, dialog; Čapek používá i **jiná písma a typy textu** (tisk novin, cizí jazyky)",
+"**Otevřený konec** – román nedává jasné rozuzlení, jen naznačí, že se mloci možná vyhubí navzájem"
+],
+postup:"převážně **chronologický** (objev mloků → obchod a rozmach → válka), ale **fragmentární**: 1. kniha souvislé vyprávění, 2. kniha **přehled dějin mloků** složený z dokumentů (časově přesahuje 1. knihu a shrnuje celá léta), 3. kniha zrychlená řada událostí; rámcová postava **pana Povondry** spojuje všechny tři knihy",
 cas:[["**30. léta 20. století** (současnost autora) a blízká budoucnost","Svět hospodářské krize, nástupu fašismu, kolonialismu a závodů ve zbrojení."],["Několik desetiletí","Od objevu mloků přes jejich využívání po válku, kdy mloci zatápějí pevniny."]],
 prostor:[["Ostrov **Tana Masa** (u Sumatry)","Kapitán van Toch objeví v zátoce mloky."],["Celý svět – oceány, pobřeží","Mloci se šíří po všech mořích; Louisiana, Anglie, Čína…; konference ve **Vaduzu**."],["Praha / Dolní Dobřejov – pan Povondra","Vrátný Povondra sbírá výstřižky a viní se, že pustil van Tocha k Bondymu."]],
 temata:[["**Alegorie fašismu a nacismu**","Mloci žádají „životní prostor“, mají vůdce (Chief Salamander), šíří se a ničí pevniny; svět se jim podbízí – narážka na Hitlera."],["**Honba za ziskem**","Lidé mloky prodávají a zbrojí, protože na nich vydělávají – a tím si vychovají vlastní zkázu."],["**Lidská hloupost, lhostejnost a pasivita**","Vlády vyjednávají, ustupují, nikdo nezakročí; „za to může každý“."],["Kritika masové kultury a vědy","Senzace v tisku, filmové hvězdy, vědecké studie o mlocích – vše se mění v byznys."]],

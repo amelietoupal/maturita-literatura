@@ -236,7 +236,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
   <h1>Literární historie<br>k maturitě</h1>
   <p>Všechno, co katalog CERMAT (část C) vyžaduje z literární historie: epochy, směry, skupiny, všichni autoři ze seznamu a jejich klíčová díla. Seřazeno chronologicky, jak se to vyvíjelo.</p>
   <p>Ťukni na dílo, které máš v maturitním seznamu – zezelená a celý autor se ti zvýrazní. Kontrolu kritérií seznamu najdeš vpravo dole.</p>
-  <p><a href="rozbory.html" style="font-weight:600;color:var(--ink)">→ Rozbory mých 20 maturitních děl</a> (podle školního listu Analýza – zpracování)</p>
+  <p><a href="rozbory.html" style="font-weight:600;color:var(--ink)">→ Rozbory mých 20 maturitních děl</a> – podle školního listu, s označováním, co už umíš. Díla ze školního seznamu jsou tu už předvyplněná (ta, která v přehledu jsou).</p>
   <div class="legend">
     <span><i class="sw hl"></i> nejdůležitější – v testech se objevuje nejčastěji</span>
     <span><i class="sw mine"></i> dílo z mého maturitního seznamu</span>
@@ -554,6 +554,9 @@ const KEY="lit-hist-mine-v1", NKEY="lit-hist-notes-v1";
 let notes={};
 try{const n=localStorage.getItem(NKEY);if(n)notes=JSON.parse(n)||{};}catch(e){}
 function saveNotes(){try{localStorage.setItem(NKEY,JSON.stringify(notes));return true;}catch(e){return false;}}
+// školní seznam (MZ jaro 2027) – předvyplněno, dokud si výběr sama nezměníš
+const SCHOOL_LIST=["Molière|Lakomec","Molière|Zdravý nemocný","Nikolaj Vasiljevič Gogol|Revizor","Karel Havlíček Borovský|Tyrolské elegie","Karel Hynek Mácha|Máj","George Orwell|1984","George Orwell|Farma zvířat","Karel Čapek|R.U.R.","Karel Čapek|Válka s mloky","Franz Kafka|Proměna","Zdeněk Svěrák – Ladislav Smoljak|Dobytí severního pólu"];
+mine=new Set(SCHOOL_LIST);
 try{const s=localStorage.getItem(KEY);if(s)mine=new Set(JSON.parse(s));}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify([...mine]));}catch(e){}}
 

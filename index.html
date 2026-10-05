@@ -179,6 +179,10 @@ body.quiz .au.reveal .tx, body.quiz .au.reveal .works{filter:none}
 body.quiz .au{cursor:pointer}
 body.quiz .au:not(.reveal) .works{pointer-events:none}
 .au.hide{display:none}
+.era.s-hide{display:none}
+body.searching .era{margin-top:10px;padding-top:20px}
+.qinfo{width:100%;font-size:14px;padding:4px 2px}
+.qinfo button{margin-left:8px;border:1px solid var(--rule);background:var(--card);border-radius:999px;padding:3px 10px;font-size:13px;cursor:pointer}
 
 /* extra sections */
 .box{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:18px 20px;margin:16px 0}
@@ -250,6 +254,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
     <button class="pbtn" id="practice">Procvičovat</button>
     <input class="search" id="q" type="search" placeholder="Hledat autora, dílo, pojem…" aria-label="Hledat">
     <nav class="jump" id="jump" aria-label="Přejít na epochu"></nav>
+    <div class="qinfo" id="qInfo" hidden></div>
   </div>
 </div>
 
@@ -687,10 +692,36 @@ Object.keys(modes).forEach(id=>document.getElementById(id).addEventListener("cli
   Object.keys(modes).forEach(k=>document.getElementById(k).setAttribute("aria-pressed",k===id));
   document.querySelectorAll(".au.reveal").forEach(a=>a.classList.remove("reveal"));
 }));
-document.getElementById("q").addEventListener("input",ev=>{
-  const q=ev.target.value.trim().toLowerCase();
-  document.querySelectorAll(".au").forEach(a=>a.classList.toggle("hide",q&&!(a.dataset.s+" "+(notes[a.dataset.nk]||"").toLowerCase()).includes(q)));
-});
+const norm=t=>(t||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+let qT;
+function runSearch(scroll){
+  const raw=document.getElementById("q").value.trim(),q=norm(raw),info=document.getElementById("qInfo");
+  document.body.classList.toggle("searching",!!q);
+  let n=0,first=null;
+  document.querySelectorAll(".era").forEach(sec=>{
+    const head=sec.querySelector(".era-head"),tr=sec.querySelector(".traits");
+    const nameHit=q&&head&&norm(head.querySelector("h2").textContent).includes(q);
+    const trHit=q&&norm((tr?tr.textContent:"")+" "+(sec.querySelector(".ctx")||{}).textContent+" "+(notes["era:"+sec.id]||"")).includes(q);
+    const aus=sec.querySelectorAll(".au");let hit=0;
+    aus.forEach(a=>{
+      const m=!q||nameHit||norm(a.textContent+" "+(notes[a.dataset.nk]||"")).includes(q);
+      a.classList.toggle("hide",!m);if(m&&q)hit++;
+    });
+    const extra=!aus.length&&q&&norm(sec.textContent).includes(q);
+    const show=!q||nameHit||trHit||hit>0||extra;
+    sec.classList.toggle("s-hide",!show);
+    if(q&&show){n+=hit+((trHit||extra)&&!nameHit?1:0);if(!first)first=(trHit||extra||nameHit)?sec:sec.querySelector(".au:not(.hide)");}
+  });
+  if(!q){info.hidden=true;return;}
+  info.hidden=false;
+  info.innerHTML=n?`Nalezeno: <b>${n}</b> pro „${esc(raw)}“ <button id="qClear">Zrušit hledání</button>`:`Pro „${esc(raw)}“ nic nenalezeno. <button id="qClear">Zrušit hledání</button>`;
+  if(scroll&&first)requestAnimationFrame(()=>window.scrollTo({top:first.getBoundingClientRect().top+window.scrollY-document.querySelector(".bar").offsetHeight-12}));
+}
+const qEl=document.getElementById("q");
+qEl.addEventListener("input",()=>{clearTimeout(qT);qT=setTimeout(()=>runSearch(true),250)});
+qEl.addEventListener("search",()=>runSearch(true));
+qEl.addEventListener("keydown",ev=>{if(ev.key==="Enter"){ev.preventDefault();runSearch(true);qEl.blur();}});
+document.addEventListener("click",ev=>{if(ev.target.id==="qClear"){qEl.value="";runSearch(false);}});
 const dr=document.getElementById("drawer");
 document.getElementById("fab").addEventListener("click",()=>{dr.classList.add("open");dr.querySelector(".close").focus()});
 dr.addEventListener("click",ev=>{if(ev.target.closest("[data-close]"))dr.classList.remove("open")});

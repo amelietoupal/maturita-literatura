@@ -827,124 +827,155 @@ const pick=a=>a[Math.random()*a.length|0];
 const strip=s=>s.replace(/\*\*/g,"");
 const mainCat=a=>a.w[0][2];
 function distract(correct,pool,n=3){return shuf(pool.filter(x=>x!==correct&&!correct.split(" / ").includes(x))).filter((x,i,arr)=>arr.indexOf(x)===i).slice(0,n)}
-function qWho(a){
-  const w=pick(a.w.filter(x=>x[3]).length?a.w.filter(x=>x[3]):a.w);
-  const same=AUS.filter(x=>!ANON.has(x.n)&&x.n!==a.n&&mainCat(x)===mainCat(a)).map(x=>x.n);
-  const opts=shuf([a.n,...distract(a.n,same)]);
-  return {q:`Kdo napsal dílo ${w[0]}?`,opts,ok:a.n,expl:a.t,nk:"au:"+a.n,lab:a.n};
-}
-function qWork(a){
-  const w=pick(a.w.filter(x=>x[3]).length?a.w.filter(x=>x[3]):a.w);
-  const others=AUS.filter(x=>x.n!==a.n&&mainCat(x)===mainCat(a)).flatMap(x=>x.w.map(y=>y[0]));
-  const opts=shuf([w[0],...distract(w[0],others)]);
-  return {q:`Které z těchto děl napsal(a) ${a.n}?`,opts,ok:w[0],expl:a.t,nk:"au:"+a.n,lab:a.n};
-}
-function qEra(a){
-  const far=ERAS.filter((e,i)=>Math.abs(i-a.ei)>1).map(e=>e.name);
-  const ok=ERAS[a.ei].name;
-  return {q:`Do které epochy patří ${a.n}?`,sub:a.w.slice(0,2).map(w=>w[0]).join(", "),opts:shuf([ok,...distract(ok,far)]),ok,expl:a.t,nk:"au:"+a.n,lab:a.n};
-}
-function qChar(a){
-  let t=strip(a.t);
-  const parts=a.n.split(/[ –]+/).filter(p=>p.length>2);
-  parts.forEach(p=>{t=t.split(p).join("___")});
-  a.w.forEach(w=>{t=t.split(w[0]).join("___")});
-  const same=AUS.filter(x=>!ANON.has(x.n)&&x.n!==a.n&&mainCat(x)===mainCat(a)).map(x=>x.n);
-  return {q:"Kterého autora popisuje charakteristika?",sub:t,opts:shuf([a.n,...distract(a.n,same)]),ok:a.n,expl:"Klíčová díla: "+a.w.slice(0,3).map(w=>w[0]).join(", "),nk:"au:"+a.n,lab:a.n};
-}
-function qSmer(){
-  const s=pick(SMERY);
-  return {q:"Který směr je popsán?",sub:s[1],opts:shuf([s[0],...distract(s[0],SMERY.map(x=>x[0]))]),ok:s[0],expl:"",nk:null,lab:s[0]};
-}
-function qFig(){
-  const f=pick(FIGS);const ex=f[2].split(";")[0].replace(/\s*\(.*?\)\s*$/,"");
-  return {q:"Který trop nebo figura se uplatňuje v ukázce?",sub:ex,opts:shuf([f[0],...distract(f[0],FIGS.map(x=>x[0]))]),ok:f[0],expl:f[0]+" – "+f[1],nk:null,lab:f[0]};
-}
-function qGenre(){
-  const g=pick(GENRES);
-  return {q:"Který žánr je popsán?",sub:strip(g[1]).replace(/\s*\(.*?\)\s*$/,""),opts:shuf([g[0],...distract(g[0],GENRES.map(x=>x[0]))]),ok:g[0],expl:g[0]+" – "+strip(g[1]),nk:null,lab:g[0]};
-}
-function genRound(scope,n=10){
-  let aus=AUS;
-  if(scope==="unknown")aus=AUS.filter(a=>lvl[a.n]!=="ok");
-  else if(scope==="weak")aus=AUS.filter(a=>lvl[a.n]==="no"||lvl[a.n]==="mid");
-  else if(ERA_NAME[scope])aus=AUS.filter(a=>a.era===scope);
-  const out=[],seen=new Set();
-  for(let t=0;out.length<n&&t<400;t++){
-    let q;
-    if(scope==="smery")q=qSmer();
-    else if(scope==="teorie")q=Math.random()<.6?qFig():qGenre();
-    else{
-      if(!aus.length)break;
-      const r=Math.random();
-      if(scope==="all"&&r<.12)q=qSmer();
-      else if(scope==="all"&&r<.2)q=qFig();
-      else{
-        const a=pick(aus),named=!ANON.has(a.n),k=Math.random();
-        if(!named)q=k<.5||ERA_AMBIG.has(a.n)?qWork(a):qEra(a);
-        else if(k<.33)q=qWho(a);else if(k<.58)q=qWork(a);else if(k<.8)q=qChar(a);
-        else q=ERA_AMBIG.has(a.n)?qWho(a):qEra(a);
-      }
-    }
-    if(!q||q.opts.length<3||seen.has(q.q+q.ok+(q.sub||"")))continue;
-    seen.add(q.q+q.ok+(q.sub||""));out.push(q);
-  }
+const ERA_I=Object.fromEntries(ERAS.map((e,i)=>[e.id,i]));
+const keyWorks=a=>a.w.filter(x=>x[3]).length?a.w.filter(x=>x[3]):a.w.slice(0,1);
+const named=a=>!ANON.has(a.n);
+// tipy na špatné odpovědi: nejdřív ze stejné epochy (aby to nebylo zadarmo), pak ze sousedních
+function poolNear(a,f){
+  const by=d=>AUS.filter(x=>x.n!==a.n&&Math.abs(x.ei-a.ei)===d);
+  let out=[];for(let d=0;d<ERAS.length&&out.length<12;d++)out=out.concat(shuf(by(d)).flatMap(f));
   return out;
 }
+function opts4(ok,pool){const o=[];for(const x of pool){if(o.length===3)break;if(x&&x!==ok&&!o.includes(x))o.push(x);}return o.length===3?shuf([ok,...o]):null;}
+const qid=q=>q.q+"|"+(q.sub||"")+"|"+q.ok;
+function qWho(a,w){ // kdo napsal dílo
+  const opts=opts4(a.n,poolNear(a,x=>named(x)&&!x.w.some(y=>y[0]===w[0])?[x.n]:[]));
+  return opts&&{q:`Kdo napsal dílo ${w[0]}?`,opts,ok:a.n,expl:a.t,nk:"au:"+a.n,lab:a.n};
+}
+function qWork(a,w){ // které dílo napsal autor
+  const mine=new Set(a.w.map(x=>x[0]));
+  const opts=opts4(w[0],poolNear(a,x=>x.w.map(y=>y[0]).filter(t=>!mine.has(t))));
+  return opts&&{q:`Které dílo je od autora: ${a.n.replace(" – "," a ")}?`,opts,ok:w[0],expl:`${a.n}: ${a.w.map(x=>x[0]).join(", ")}`,nk:"au:"+a.n,lab:a.n};
+}
+function qChar(a){ // poznej autora podle charakteristiky
+  let t=strip(a.t);
+  a.n.split(/[ –]+/).filter(p=>p.length>3).forEach(p=>{t=t.replace(new RegExp(p.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"g"),"___")});
+  a.w.forEach(w=>{t=t.split(w[0]).join("___")});
+  if(t.replace(/___/g,"").trim().length<50)return null; // příliš obecný popis by seděl na víc autorů
+  const opts=opts4(a.n,poolNear(a,x=>named(x)?[x.n]:[]));
+  return opts&&{q:"Kterého autora popisuje charakteristika?",sub:t,opts,ok:a.n,expl:"Klíčová díla: "+keyWorks(a).map(w=>w[0]).join(", "),nk:"au:"+a.n,lab:a.n};
+}
+function qEra(a,w){ // anonymní dílo → epocha
+  const ok=ERAS[a.ei].name,far=shuf(ERAS.filter((e,i)=>Math.abs(i-a.ei)>1)).map(e=>e.name);
+  const opts=opts4(ok,far);
+  return opts&&{q:`Do které epochy patří dílo ${w[0]}?`,opts,ok,expl:a.t,nk:"au:"+a.n,lab:a.n};
+}
+function qTrait(e,t){ // poznávací znak epochy
+  const i=ERA_I[e.id],ok=strip(t);
+  const pool=shuf(ERAS.filter((x,j)=>Math.abs(j-i)>1).flatMap(x=>x.tr.map(strip)));
+  const opts=opts4(ok,pool);
+  return opts&&{q:`Který poznávací znak patří k epoše ${e.name}?`,opts,ok,expl:"Znaky epochy: "+e.tr.map(strip).join(" · "),nk:"era:"+e.id,lab:e.name};
+}
+function qSmer(sm){
+  const opts=opts4(sm[0],shuf(SMERY.map(x=>x[0])));
+  return opts&&{q:"Který směr je popsán?",sub:sm[1],opts,ok:sm[0],expl:"",nk:null,lab:sm[0]};
+}
+// u ukázek se některé figury překrývají (vítr zpívá = personifikace i metafora) – ty spolu nenabízet
+const FIG_CLASH={metafora:["personifikace","symbol","alegorie","metonymie","synekdocha"],personifikace:["metafora","alegorie"],metonymie:["synekdocha","metafora"],synekdocha:["metonymie","metafora"],symbol:["metafora","alegorie"],alegorie:["symbol","metafora","personifikace"],anafora:["epizeuxis"],epizeuxis:["anafora","epifora"],epifora:["epizeuxis"],gradace:["hyperbola"],hyperbola:["gradace"],elipsa:["řečnická otázka"],apostrofa:["řečnická otázka"],"řečnická otázka":["apostrofa"],aliterace:["personifikace","metafora"],inverze:["personifikace","metafora"]};
+function qFigDef(f){
+  const opts=opts4(f[0],shuf(FIGS.map(x=>x[0])));
+  return opts&&{q:"Jak se nazývá tento trop / figura?",sub:f[1],opts,ok:f[0],expl:`${f[0]} – ${f[1]}. Příklad: ${f[2]}`,nk:null,lab:f[0]};
+}
+function qFigEx(f,ex){
+  const bad=new Set(FIG_CLASH[f[0]]||[]);
+  const opts=opts4(f[0],shuf(FIGS.map(x=>x[0]).filter(n=>!bad.has(n))));
+  return opts&&{q:"Který trop nebo figura je v ukázce?",sub:ex,opts,ok:f[0],expl:`${f[0]} – ${f[1]}`,nk:null,lab:f[0]};
+}
+const figExamples=f=>f[0]==="alegorie"?[]:f[2].split(";").map(x=>x.trim().replace(/\s*\((?![^)]*=)[^)]*\)\s*$/,"")).filter(x=>x.length>3);
+function qGenre(g){
+  const opts=opts4(g[0],shuf(GENRES.map(x=>x[0])));
+  return opts&&{q:"Který žánr je popsán?",sub:strip(g[1]).replace(/\s*\([^)]*\)\s*$/,""),opts,ok:g[0],expl:g[0]+" – "+strip(g[1]),nk:null,lab:g[0]};
+}
+// všechny otázky k autorovi: každé dílo, charakteristika
+function authorQs(a){
+  const out=[];
+  if(!named(a)){a.w.forEach(w=>out.push(qEra(a,w)));return out;}
+  keyWorks(a).forEach(w=>out.push(qWho(a,w)));
+  a.w.filter(w=>!keyWorks(a).includes(w)).forEach(w=>out.push(qWork(a,w)));
+  out.push(qChar(a));
+  return out;
+}
+// celé téma = každá položka tématu aspoň jednou
+function allQs(scope){
+  let qs=[];
+  if(scope==="smery")qs=SMERY.map(qSmer);
+  else if(scope==="teorie")qs=[...FIGS.map(qFigDef),...FIGS.flatMap(f=>figExamples(f).slice(0,1).map(ex=>qFigEx(f,ex))),...GENRES.map(qGenre)];
+  else if(ERA_NAME[scope]){const e=ERAS[ERA_I[scope]];qs=[...e.tr.map(t=>qTrait(e,t)),...AUS.filter(a=>a.era===scope).flatMap(authorQs)];}
+  else if(scope==="weak")qs=AUS.filter(a=>lvl[a.n]==="no"||lvl[a.n]==="mid").flatMap(authorQs);
+  else if(scope==="unknown")qs=AUS.filter(a=>lvl[a.n]!=="ok").flatMap(authorQs);
+  else qs=[...ERAS.flatMap(e=>e.tr.map(t=>qTrait(e,t))),...AUS.flatMap(authorQs),...SMERY.map(qSmer),...FIGS.map(qFigDef),...GENRES.map(qGenre)];
+  const seen=new Set();
+  return shuf(qs.filter(q=>q&&!seen.has(qid(q))&&seen.add(qid(q))));
+}
+function genRound(scope,mode){const qs=allQs(scope);return mode==="quick"?qs.slice(0,10):qs;}
+// znovu stejná otázka s nově zamíchanými odpověďmi
+const reshuffle=q=>({...q,opts:shuf(q.opts),retry:true});
 const pov=document.getElementById("pov"),povIn=document.getElementById("povIn");
 let R=null;
 function povTop(t){return `<div class="top"><h2>${t}</h2><button class="x" data-pclose aria-label="Zavřít">×</button></div>`}
 function setup(){
   povIn.innerHTML=povTop("Procvičování")+`
-  <p class="note" style="font-family:var(--sans)">Otázky ve stylu didaktického testu. Každé kolo má 10 otázek.</p>
+  <p class="note" style="font-family:var(--sans)">Otázky ve stylu didaktického testu. <b>Celé téma</b> projde všechno: každé dílo, každého autora a poznávací znaky epochy. Otázky, které zodpovíš špatně, se ti na konci vrátí, dokud je nedáš.</p>
   <label for="pScope">Z čeho</label>
   <select id="pScope">
-    <option value="all">Všechno (autoři, díla, směry, figury)</option>
-    <option value="weak">Jen autoři, co mi nejdou (napůl / neumím)</option>
-    <option value="unknown">Všichni autoři, které ještě neumím</option>
-    <option value="smery">Literární směry podle popisu</option>
-    <option value="teorie">Tropy, figury a žánry</option>
-    <optgroup label="Jedna epocha">${ERAS.map(e=>`<option value="${e.id}">${e.name}</option>`).join("")}</optgroup>
+    <optgroup label="Epocha">${ERAS.map(e=>`<option value="${e.id}">${e.name}</option>`).join("")}</optgroup>
+    <optgroup label="Podle mého označení">
+      <option value="weak">Autoři, co mi nejdou (napůl / neumím)</option>
+      <option value="unknown">Všichni autoři, které ještě neumím</option>
+    </optgroup>
+    <optgroup label="Napříč látkou">
+      <option value="smery">Literární směry podle popisu</option>
+      <option value="teorie">Tropy, figury a žánry</option>
+      <option value="all">Úplně všechno</option>
+    </optgroup>
   </select>
+  <label for="pMode">Jak</label>
+  <select id="pMode"></select>
   <button class="pbtn go" id="pGo">Začít</button>`;
+  const sc=document.getElementById("pScope"),md=document.getElementById("pMode");
+  if(R&&R.scope)sc.value=R.scope;
+  const fill=()=>{const n=allQs(sc.value).length;md.innerHTML=`<option value="full">Celé téma – ${n} otázek</option><option value="quick">Rychlé kolo – ${Math.min(10,n)} otázek</option>`;md.disabled=!n;};
+  sc.addEventListener("change",fill);fill();
 }
 function showQ(){
   const q=R.qs[R.i];
   povIn.innerHTML=povTop("Procvičování")+`
   <div class="meta"><span>${R.i+1} / ${R.qs.length}</span><div class="tr"><div class="fl" style="width:${R.i/R.qs.length*100}%"></div></div><span>${R.ok} ✓</span></div>
-  <div class="q">${esc(q.q)}</div>${q.sub?`<div class="sub">${esc(q.sub)}</div>`:""}
+  ${q.retry?`<div class="note" style="font-family:var(--sans);font-size:13px">↻ opakování otázky, kterou jsi spletla</div>`:""}<div class="q">${esc(q.q)}</div>${q.sub?`<div class="sub">${esc(q.sub)}</div>`:""}
   <div class="opts">${q.opts.map((o,i)=>`<button class="opt" data-o="${i}">${esc(o)}</button>`).join("")}</div>
   <div id="pFb"></div>`;
 }
 function answer(i){
   const q=R.qs[R.i],btns=povIn.querySelectorAll(".opt"),chosen=q.opts[i],good=chosen===q.ok;
   btns.forEach((b,j)=>{b.disabled=true;if(q.opts[j]===q.ok)b.classList.add("ok");else if(j===i)b.classList.add("bad")});
-  if(good)R.ok++;else R.wrong.push({q,chosen});
+  if(good){if(!q.retry)R.ok++;}
+  else{if(!q.retry)R.wrong.push({q,chosen});if(R.mode==="full")R.qs.push(reshuffle(q));}
   document.getElementById("pFb").innerHTML=`<div class="fb"><b>${good?"Správně!":"Správně je: "+esc(q.ok)}</b>${q.expl?`<div style="margin-top:6px">${md(esc(q.expl))}</div>`:""}</div>
   <button class="pbtn go" id="pNext">${R.i+1<R.qs.length?"Další otázka":"Výsledek"}</button>`;
   document.getElementById("pNext").focus();
 }
 function result(){
-  const pct=Math.round(R.ok/R.qs.length*100);
+  const T=R.first,pct=Math.round(R.ok/T*100);
   povIn.innerHTML=povTop("Výsledek")+`
-  <div class="score">${R.ok} / ${R.qs.length}</div>
+  <div class="score">${R.ok} / ${T}</div>
+  <p class="note" style="font-family:var(--sans);margin:0">správně napoprvé${R.mode==="full"&&R.wrong.length?" – chyby jsi pak doopakovala":""}</p>
   <p style="font-family:var(--serif);font-size:18px;margin:4px 0 0">${pct>=90?"Výborně, tohle umíš.":pct>=70?"Dobrý – ještě pár mezer.":pct>=44?"Na test by to stačilo, ale je co zlepšovat.":"Tohle si ještě projdi."}</p>
   ${R.wrong.length?`<div class="mist"><b style="font-size:14px;color:var(--muted)">Chyby k zopakování</b>${R.wrong.map(w=>`<div>${esc(w.q.q)}${w.q.sub&&w.q.sub.length<90?` <i>(${esc(w.q.sub)})</i>`:""}<br>Tvoje odpověď: <s>${esc(w.chosen)}</s> → <b>${esc(w.q.ok)}</b>${w.q.nk?` · <a href="#" data-pgo="${esc(w.q.nk)}">ukázat v přehledu</a>`:""}</div>`).join("")}</div>`:""}
-  <div class="row2"><button class="pbtn" id="pAgain">Další kolo</button><button class="ghost" id="pSetup">Změnit téma</button></div>`;
+  <div class="row2"><button class="pbtn" id="pAgain">${R.mode==="full"?"Projít znovu":"Další kolo"}</button><button class="ghost" id="pSetup">Změnit téma</button></div>`;
 }
-function start(scope){
-  const qs=genRound(scope);
-  if(!qs.length){povIn.innerHTML=povTop("Procvičování")+`<p>Pro tenhle výběr zatím nejsou žádné otázky.</p><button class="ghost" id="pSetup">Zpět</button>`;return;}
-  R={scope,qs,i:0,ok:0,wrong:[]};showQ();
+function start(scope,mode){
+  const qs=genRound(scope,mode);
+  if(!qs.length){povIn.innerHTML=povTop("Procvičování")+`<p>Pro tenhle výběr zatím nejsou žádné otázky${scope==="weak"?" – nejdřív si u autorů označ, co ti nejde":""}.</p><button class="ghost" id="pSetup">Zpět</button>`;return;}
+  R={scope,mode,qs,first:qs.length,i:0,ok:0,wrong:[]};showQ();
 }
 document.getElementById("practice").addEventListener("click",()=>{pov.classList.add("open");document.body.style.overflow="hidden";setup();});
 function closePov(){pov.classList.remove("open");document.body.style.overflow="";}
 povIn.addEventListener("click",ev=>{
   if(ev.target.closest("[data-pclose]"))return closePov();
-  if(ev.target.id==="pGo")return start(document.getElementById("pScope").value);
+  if(ev.target.id==="pGo")return start(document.getElementById("pScope").value,document.getElementById("pMode").value);
   const o=ev.target.closest(".opt");if(o&&!o.disabled)return answer(+o.dataset.o);
   if(ev.target.id==="pNext"){R.i++;return R.i<R.qs.length?showQ():result();}
-  if(ev.target.id==="pAgain")return start(R.scope);
+  if(ev.target.id==="pAgain")return start(R.scope,R.mode);
   if(ev.target.id==="pSetup")return setup();
   const g=ev.target.closest("[data-pgo]");
   if(g){ev.preventDefault();closePov();document.getElementById("mAll").click();const el=document.querySelector(`[data-nk="${CSS.escape(g.dataset.pgo)}"]`);if(el){el.classList.remove("hide");el.scrollIntoView({block:"center"});}}

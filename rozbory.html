@@ -101,6 +101,15 @@ details.book.lv-no{border-left-color:var(--no)}
 .flt{display:inline-flex;border:1px solid var(--rule);border-radius:999px;overflow:hidden;background:var(--card)}
 .flt button{border:0;background:none;padding:7px 12px;font-size:14px;cursor:pointer;font-family:var(--sans)}
 .flt button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+/* psaní do textu */
+.psani [contenteditable]{outline:1px dashed #8B5CF6;outline-offset:2px;border-radius:3px;cursor:text}
+.psani [contenteditable]:focus{outline:2px solid #8B5CF6;background:color-mix(in srgb,#8B5CF6 7%,transparent)}
+.psani .edited{box-shadow:inset 3px 0 0 #8B5CF6}
+.edbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:70;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;background:#5B21B6;color:#fff;border-radius:18px;padding:10px 12px;font-family:var(--sans);font-size:13.5px;box-shadow:0 6px 20px rgba(0,0,0,.3);width:max-content;max-width:calc(100vw - 24px)}
+.edbar[hidden]{display:none}
+.edbar button{border:1px solid #fff;background:none;color:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font-size:13.5px;font-family:var(--sans)}
+.edbar button[data-done]{background:#fff;color:#5B21B6;font-weight:600}
+@media print{.edbar{display:none!important}}
 /* zvýrazňovač */
 .uhl{border-radius:2px;padding:0 1px;cursor:pointer;color:inherit;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .uhl.y{background:#FFE45C}.uhl.g{background:#9BE7A8}.uhl.p{background:#FFB3D1}.uhl.b{background:#A9D4FF}
@@ -144,6 +153,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
   <h1>Rozbory mých<br>maturitních děl</h1>
   <p>Všech 20 děl ze seznamu k MZ (jaro 2027), zpracovaných podle listu <b>ANALÝZA literárního díla – ZPRACOVÁNÍ</b>: kompoziční rovina, čas a prostor, témata a děj, postavy a vypravěč, ukázka v kontextu, jazyk a literárně-historický kontext.</p>
   <p><b>U každé knihy si označ, jak ji umíš</b> – ✓ umím, ~ napůl, ✗ neumím. <b>Zvýrazňovač:</b> označ v textu slova (tažením prstem nebo myší) a vyber barvu dole; na zvýraznění klepni, když ho chceš odebrat. Vše se ukládá v tomhle prohlížeči na tomhle zařízení.</p>
+  <p><b>Psaní do textu:</b> tlačítkem <b>✎ Psát do textu</b> můžeš v rozboru cokoli dopsat, smazat nebo přepsat. Původní text odstavce jde kdykoli vrátit.</p>
   <p>Zvýrazněné pojmy jsou to, co u ústní zkoušky nejvíc chtějí slyšet. Body 5 a 7 se u zkoušky vztahují ke konkrétní ukázce – tady najdeš pasáže, které se jako ukázky dávají nejčastěji, a co v nich obvykle převládá.</p>
 </header>
 <div class="prog" id="prog"></div>
@@ -159,6 +169,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
     <button class="btn" id="openAll">Rozbalit vše</button>
     <button class="btn" id="closeAll">Sbalit vše</button>
     <button class="btn" id="print">Tisk / PDF</button>
+    <button class="btn" id="psaniBtn" aria-pressed="false" style="border-color:#7C3AED;color:#7C3AED;font-weight:600">✎ Psát do textu</button>
     <nav class="jump" id="jump" aria-label="Přejít na dílo"></nav>
   </div>
 </div>
@@ -172,6 +183,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
 </footer>
 
 <script src="rozbory-data.js"></script>
+<script src="psani.js"></script>
 <script>
 const CATS={A:"Literatura do konce 18. století",B:"Literatura 19. století",C:"Světová literatura 20. a 21. století",D:"Česká literatura 20. a 21. století"};
 const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -276,9 +288,10 @@ function wrapRange(el,s,e,cls,id){
   todo.forEach(([n,a,z])=>{let t=n;if(a>0)t=t.splitText(a);if(z-a<t.data.length)t.splitText(z-a);
     const m=document.createElement("span");m.className="uhl "+cls;m.dataset.id=id;t.replaceWith(m);m.appendChild(t);});
 }
-function paintEl(el){unwrap(el);(hls[el.dataset.hk]||[]).forEach(h=>wrapRange(el,h.s,h.e,h.c,h.id));}
+function paintEl(el){if(TE.has(el.dataset.hk))return;unwrap(el);(hls[el.dataset.hk]||[]).forEach(h=>wrapRange(el,h.s,h.e,h.c,h.id));}
 function paintBookHl(b){
-  let n=0;b.querySelectorAll("[data-hk]").forEach(el=>{if(hls[el.dataset.hk]||el.querySelector(".uhl"))paintEl(el);n+=(hls[el.dataset.hk]||[]).length;});
+  b.querySelectorAll("[data-hk]").forEach(el=>{if(hls[el.dataset.hk]||el.querySelector(".uhl"))paintEl(el);});
+  const n=new Set([...b.querySelectorAll(".body .uhl")].map(x=>x.dataset.id)).size;
   b.querySelector(".hlcount").textContent=n?`🖍 ${n}`:"";
   b.querySelector(".hlclear").classList.toggle("hide",!n);
 }
@@ -292,6 +305,7 @@ function showBar(mode){
 }
 function hideBar(){bar.hidden=true;pendingRange=null;if(selHl){document.querySelectorAll(".uhl.sel").forEach(x=>x.classList.remove("sel"));selHl=null;}}
 document.addEventListener("selectionchange",()=>{clearTimeout(window._hlT);window._hlT=setTimeout(()=>{
+  if(document.body.classList.contains("psani"))return;
   const sel=getSelection();
   if(!sel.rangeCount||sel.isCollapsed){if(pendingRange&&!selHl)hideBar();return;}
   const r=sel.getRangeAt(0),up=x=>(x.nodeType===1?x:x.parentElement),a=up(r.startContainer)?.closest("[data-hk]"),z=up(r.endContainer)?.closest("[data-hk]");
@@ -305,6 +319,15 @@ document.addEventListener("selectionchange",()=>{clearTimeout(window._hlT);windo
 bar.addEventListener("mousedown",e=>e.preventDefault());
 bar.addEventListener("click",e=>{
   const c=e.target.closest("[data-c]"),rm=e.target.closest("[data-rm]");
+  if(pendingRange&&c&&TE.has(pendingRange.k)){ // upravený odstavec: zvýraznění se uloží přímo do textu
+    const {k,s,e:en}=pendingRange,el=document.querySelector(`[data-hk="${k}"]`);
+    wrapRange(el,s,en,c.dataset.c,Date.now().toString(36));TE.save(el);getSelection().removeAllRanges();hideBar();paintBookHl(el.closest("details"));return;
+  }
+  if(selHl&&(c||rm)&&TE.has(selHl.k)){
+    const el=document.querySelector(`[data-hk="${selHl.k}"]`);
+    el.querySelectorAll(`.uhl[data-id="${selHl.id}"]`).forEach(m=>{if(rm)m.replaceWith(...m.childNodes);else m.className="uhl "+c.dataset.c;});
+    el.normalize();TE.save(el);hideBar();paintBookHl(el.closest("details"));return;
+  }
   if(pendingRange&&c){
     const {k,s,e:en}=pendingRange,list=(hls[k]||[]).filter(h=>h.e<=s||h.s>=en); // překryté nahradit
     list.push({s,e:en,c:c.dataset.c,id:Date.now().toString(36)+Math.random().toString(36).slice(2,5)});
@@ -321,9 +344,11 @@ bar.addEventListener("click",e=>{
 main.addEventListener("click",e=>{
   const clr=e.target.closest("[data-clear]");
   if(clr){if(!confirm("Smazat všechna zvýraznění v této knize?"))return;
-    Object.keys(hls).forEach(k=>{if(k.startsWith("d"+clr.dataset.clear+"-"))delete hls[k];});store(HKEY,hls);paintBookHl(clr.closest("details"));return;}
+    Object.keys(hls).forEach(k=>{if(k.startsWith("d"+clr.dataset.clear+"-"))delete hls[k];});store(HKEY,hls);
+    clr.closest("details").querySelectorAll("[data-hk]").forEach(el=>{if(TE.has(el.dataset.hk)&&el.querySelector(".uhl")){unwrap(el);TE.save(el);}});
+    paintBookHl(clr.closest("details"));return;}
   const m=e.target.closest(".uhl");
-  if(m&&getSelection().isCollapsed){
+  if(m&&getSelection().isCollapsed&&!document.body.classList.contains("psani")){
     document.querySelectorAll(".uhl.sel").forEach(x=>x.classList.remove("sel"));
     document.querySelectorAll(`.uhl[data-id="${m.dataset.id}"]`).forEach(x=>x.classList.add("sel"));
     selHl={k:m.closest("[data-hk]").dataset.hk,id:m.dataset.id};pendingRange=null;showBar("edit");return;
@@ -331,6 +356,8 @@ main.addEventListener("click",e=>{
   if(!e.target.closest(".hlbar")&&selHl)hideBar();
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")hideBar();});
+const TE=TextEdit.init({key:"rozbory-text-v1",els:[...main.querySelectorAll("[data-hk]")],btn:document.getElementById("psaniBtn"),
+  onRevert:el=>paintBookHl(el.closest("details")),onStart:hideBar});
 books.forEach(paintBookHl);
 
 /* ===== poznámky ke knize ===== */
@@ -357,7 +384,7 @@ const norm=t=>(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
 let qT;
 document.getElementById("q").addEventListener("input",e=>{clearTimeout(qT);qT=setTimeout(()=>{
   const q=norm(e.target.value.trim());
-  books.forEach(b=>b.classList.toggle("hide",!(!q||b.dataset.text.includes(q)||norm(bnotes[b.id.slice(1)]).includes(q))));
+  books.forEach(b=>b.classList.toggle("hide",!(!q||b.dataset.text.includes(q)||norm(b.textContent).includes(q)||norm(bnotes[b.id.slice(1)]).includes(q))));
   updateCats();
 },120);});
 </script>

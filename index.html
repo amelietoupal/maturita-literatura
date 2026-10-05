@@ -216,6 +216,32 @@ body.searching .era{margin-top:10px;padding-top:20px}
 .actions button{border:1px solid var(--rule);background:var(--card);border-radius:999px;padding:8px 14px;cursor:pointer}
 .note{color:var(--muted);font-size:13px}
 
+/* ---------- moje četba ---------- */
+.cetba{--ok:#1F8A5B;--mid:#D9A21B;--no:#C2412D;margin:20px 0 8px;background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--mine-line);border-radius:10px;padding:16px 16px 12px;font-family:var(--sans)}
+.cetba-top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-start;justify-content:space-between}
+.cetba h2{font-family:var(--serif);font-size:24px;line-height:1.15;margin:0 0 4px}
+.cetba-top p{margin:0;font-size:14.5px;color:var(--muted);max-width:60ch}
+.cetba-go{flex:0 0 auto;text-decoration:none;background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 16px;font-weight:600;font-size:14px}
+.cetba-prog{font-size:14px;margin:12px 0 2px}
+.cetba-prog .tr{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--rule);margin-top:5px;max-width:420px}
+.cetba-prog .tr span{display:block;height:100%}
+.cetba-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 18px;margin-top:12px}
+.cetba-grid h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0 0 6px;padding-bottom:4px;border-bottom:1px solid var(--rule)}
+.cetba-grid ol{list-style:none;margin:0;padding:0}
+.cetba-grid li{margin:0}
+.cetba-grid a{display:flex;gap:8px;align-items:baseline;text-decoration:none;padding:4px 6px;margin:0 -6px;border-radius:6px;font-size:14px;line-height:1.3}
+.cetba-grid a:hover,.cetba-grid a:focus-visible{background:var(--paper)}
+.cetba-grid a .n{color:var(--muted);font-size:12px;min-width:1.6em;text-align:right}
+.cetba-grid a .t{flex:1}
+.cetba-grid a small{display:block;color:var(--muted);font-size:12px}
+.cs{flex:0 0 auto;display:inline-block;width:10px;height:10px;border-radius:50%;border:1.5px solid var(--rule);background:transparent;align-self:center}
+.cs.ok{background:var(--ok);border-color:var(--ok)}.cs.mid{background:var(--mid);border-color:var(--mid)}.cs.no{background:var(--no);border-color:var(--no)}
+.cetba-lg{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:12px;font-size:12.5px;color:var(--muted)}
+.cetba-lg span{display:inline-flex;align-items:center;gap:6px}
+.bar-in a.pbtn{text-decoration:none;background:var(--mine-line)}
+@media (max-width:900px){.cetba-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.cetba-grid{grid-template-columns:1fr}.cetba-go{width:100%;text-align:center}}
+
 footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--sans);font-size:13px;color:var(--muted)}
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -235,8 +261,19 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
 <header class="hero">
   <h1>Literární historie<br>k maturitě</h1>
   <p>Všechno, co katalog CERMAT (část C) vyžaduje z literární historie: epochy, směry, skupiny, všichni autoři ze seznamu a jejich klíčová díla. Seřazeno chronologicky, jak se to vyvíjelo.</p>
-  <p>Ťukni na dílo, které máš v maturitním seznamu – zezelená a celý autor se ti zvýrazní. Kontrolu kritérií seznamu najdeš vpravo dole.</p>
-  <p><a href="rozbory.html" style="font-weight:600;color:var(--ink)">→ Rozbory mých 20 maturitních děl</a> – podle školního listu, s označováním, co už umíš. Díla ze školního seznamu jsou tu už předvyplněná (ta, která v přehledu jsou).</p>
+  <p>Díla z tvého školního seznamu jsou v přehledu zvýrazněná zeleně.</p>
+  <section class="cetba" aria-labelledby="cetbaH">
+    <div class="cetba-top">
+      <div>
+        <h2 id="cetbaH">Moje četba k maturitě</h2>
+        <p>20 děl ze školního seznamu (jaro 2027) – každé má rozbor podle listu <i>Analýza – zpracování</i>. Barva ukazuje, jak ho umíš.</p>
+      </div>
+      <a class="cetba-go" href="rozbory.html">Otevřít rozbory →</a>
+    </div>
+    <div class="cetba-prog" id="cetbaProg"></div>
+    <div class="cetba-grid" id="cetbaGrid"></div>
+    <div class="cetba-lg"><span><i class="cs ok"></i>umím vše</span><span><i class="cs mid"></i>rozpracované</span><span><i class="cs no"></i>něco mi nejde</span><span><i class="cs"></i>zatím neoznačeno</span></div>
+  </section>
   <div class="legend">
     <span><i class="sw hl"></i> nejdůležitější – v testech se objevuje nejčastěji</span>
     <span><i class="sw mine"></i> dílo z mého maturitního seznamu</span>
@@ -253,6 +290,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
       <button id="mQuiz" aria-pressed="false">Zkoušení</button>
     </div>
     <button class="pbtn" id="practice">Procvičovat</button>
+    <a class="pbtn" href="rozbory.html">Moje četba</a>
     <input class="search" id="q" type="search" placeholder="Hledat autora, dílo, pojem…" aria-label="Hledat">
     <nav class="jump" id="jump" aria-label="Přejít na epochu"></nav>
     <div class="qinfo" id="qInfo" hidden></div>
@@ -301,6 +339,27 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
   </div>
 </div>
 
+<script src="rozbory-data.js"></script>
+<script>
+/* ---- karta „Moje četba“: 20 děl se stavem z rozborů ---- */
+(function(){
+  if(typeof ROZBORY==="undefined")return;
+  const CAT={A:"Do konce 18. století",B:"19. století",C:"Světová 20. a 21. st.",D:"Česká 20. a 21. st."};
+  let st={};try{st=JSON.parse(localStorage.getItem("rozbory-stav-v1")||"{}")||{};}catch(e){}
+  const e=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const short=a=>a.split(" (")[0].replace(/^(.*) a (.*)$/,"$1 a $2");
+  const tot={ok:0,mid:0,no:0};
+  const stateOf=r=>{const v=[1,2,3,4,5,6,7,8].map(i=>st[r.no+"-"+i]);v.forEach(x=>{if(x)tot[x]++});
+    if(v.includes("no"))return"no";if(v.every(x=>x==="ok"))return"ok";if(v.some(Boolean))return"mid";return"";};
+  const lab={ok:"umím vše",mid:"rozpracované",no:"něco mi nejde","":"zatím neoznačeno"};
+  document.getElementById("cetbaGrid").innerHTML=Object.keys(CAT).map(c=>`<div><h3>${CAT[c]}</h3><ol>${
+    ROZBORY.filter(r=>r.cat===c).map(r=>{const s=stateOf(r);return `<li><a href="rozbory.html#d${r.no}" title="${lab[s]}"><span class="n">${r.no}.</span><span class="t">${e(r.t)}<small>${e(short(r.au))}</small></span><i class="cs ${s}" aria-label="${lab[s]}"></i></a></li>`}).join("")
+  }</ol></div>`).join("");
+  const T=ROZBORY.length*8,pc=n=>n/T*100+"%";
+  document.getElementById("cetbaProg").innerHTML=`<b>Umím ${tot.ok} ze ${T} témat</b>${tot.mid||tot.no?` · napůl ${tot.mid} · nejde ${tot.no}`:" – označuj v rozborech, co už umíš"}
+   <div class="tr"><span style="width:${pc(tot.ok)};background:var(--ok)"></span><span style="width:${pc(tot.mid)};background:var(--mid)"></span><span style="width:${pc(tot.no)};background:var(--no)"></span></div>`;
+})();
+</script>
 <script>
 /* ===================== DATA ===================== */
 /* w: [název, druh p=próza po=poezie d=drama, kategorie A/B/C/D, klíčové] */

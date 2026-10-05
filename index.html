@@ -232,6 +232,8 @@ body.searching .era{margin-top:10px;padding-top:20px}
 .cetba-grid a .n{color:var(--muted);font-size:12px;min-width:1.6em;text-align:right}
 .cetba-grid a .t{flex:1}
 .cetba-grid a small{display:block;color:var(--muted);font-size:12px}
+.cs{flex:0 0 auto;width:10px;height:10px;border-radius:50%;border:1.5px solid var(--rule);align-self:center}
+.cs.ok{background:var(--ok);border-color:var(--ok)}.cs.mid{background:#D9A21B;border-color:#D9A21B}.cs.no{background:var(--bad);border-color:var(--bad)}
 .bar-in a.pbtn{text-decoration:none;background:var(--mine-line)}
 @media (max-width:900px){.cetba-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:520px){.cetba-grid{grid-template-columns:1fr}.cetba-go{width:100%;text-align:center}}
@@ -260,7 +262,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
     <div class="cetba-top">
       <div>
         <h2 id="cetbaH">Moje četba k maturitě</h2>
-        <p>20 děl ze školního seznamu (jaro 2027) – každé má rozbor podle listu <i>Analýza – zpracování</i>. Klepni na dílo a otevře se jeho rozbor.</p>
+        <p>20 děl ze školního seznamu (jaro 2027) – každé má rozbor podle listu <i>Analýza – zpracování</i>. Klepni na dílo a otevře se jeho rozbor. Barva ukazuje, jak knihu umíš.</p>
       </div>
       <a class="cetba-go" href="rozbory.html">Otevřít rozbory →</a>
     </div>
@@ -323,8 +325,10 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
   if(typeof ROZBORY==="undefined")return;
   const CAT={A:"Do konce 18. století",B:"19. století",C:"Světová 20. a 21. st.",D:"Česká 20. a 21. st."};
   const e=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  let lv={};try{lv=JSON.parse(localStorage.getItem("rozbory-kniha-v1")||"{}")||{};}catch(x){}
+  const LAB={ok:"umím",mid:"napůl",no:"neumím"};
   document.getElementById("cetbaGrid").innerHTML=Object.keys(CAT).map(c=>`<div><h3>${CAT[c]}</h3><ol>${
-    ROZBORY.filter(r=>r.cat===c).map(r=>`<li><a href="rozbory.html#d${r.no}"><span class="n">${r.no}.</span><span class="t">${e(r.t)}<small>${e(r.au.split(" (")[0])}</small></span></a></li>`).join("")
+    ROZBORY.filter(r=>r.cat===c).map(r=>`<li><a href="rozbory.html#d${r.no}"><span class="n">${r.no}.</span><span class="t">${e(r.t)}<small>${e(r.au.split(" (")[0])}</small></span><i class="cs ${lv[r.no]||""}" title="${LAB[lv[r.no]]||"neoznačeno"}"></i></a></li>`).join("")
   }</ol></div>`).join("");
 })();
 </script>

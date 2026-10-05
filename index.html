@@ -113,13 +113,22 @@ main{max-width:1100px;margin:0 auto;padding:0 20px 120px}
 .nlist h3{font-size:13px;color:var(--muted);font-weight:600;margin:16px 0 0}
 
 /* known + progress */
-.kbtn{margin-top:6px;margin-right:6px;border:1px solid var(--rule);background:none;border-radius:999px;padding:3px 11px;font-family:var(--sans);font-size:12.5px;color:var(--muted);cursor:pointer}
-.au.known .kbtn{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.au.known .nm::after{content:" ✓";color:var(--ok);font-variant:normal}
+.lv{display:inline-flex;gap:4px;margin:6px 6px 0 0;flex-wrap:wrap}
+.kbtn{border:1px solid var(--rule);background:none;border-radius:999px;padding:3px 9px;font-family:var(--sans);font-size:12.5px;color:var(--muted);cursor:pointer}
+.kbtn[aria-pressed="true"][data-v="ok"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.kbtn[aria-pressed="true"][data-v="mid"]{background:#D9A21B;border-color:#D9A21B;color:#1A2233}
+.kbtn[aria-pressed="true"][data-v="no"]{background:var(--bad);border-color:var(--bad);color:#fff}
+.au.lv-ok{border-left-color:var(--ok)}
+.au.lv-mid{border-left-color:#D9A21B}
+.au.lv-no{border-left-color:var(--bad)}
+.au.lv-ok .nm::after{content:" ✓";color:var(--ok);font-variant:normal}
+body.weak .au:not(.lv-no):not(.lv-mid){display:none}
+body.weak .era.no-weak,body.weak #zanry,body.weak #teorie,body.weak #plete{display:none}
+.pbar .lg{display:flex;flex-wrap:wrap;gap:2px 14px;margin-top:4px;color:var(--muted);font-size:12.5px}
 .prog{font-family:var(--sans);font-size:13px;color:var(--muted);grid-column:2}
 .pbar{margin:14px 0 4px;max-width:520px;font-family:var(--sans);font-size:13.5px}
 .pbar .tr{height:8px;background:var(--rule);border-radius:4px;overflow:hidden;margin-top:6px}
-.pbar .fl{height:100%;background:var(--ok);width:0;transition:width .4s}
+.pbar .tr{display:flex}.pbar .fl{height:100%;width:0;transition:width .4s}
 .pbtn{border:0;background:var(--note-line);color:#fff;border-radius:999px;padding:8px 15px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer}
 
 /* theory */
@@ -209,14 +218,11 @@ body.searching .era{margin-top:10px;padding-top:20px}
 .note{color:var(--muted);font-size:13px}
 
 /* ---------- moje četba ---------- */
-.cetba{--ok:#1F8A5B;--mid:#D9A21B;--no:#C2412D;margin:20px 0 8px;background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--mine-line);border-radius:10px;padding:16px 16px 12px;font-family:var(--sans)}
+.cetba{margin:20px 0 8px;background:var(--card);border:1px solid var(--rule);border-left:5px solid var(--mine-line);border-radius:10px;padding:16px 16px 12px;font-family:var(--sans)}
 .cetba-top{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-start;justify-content:space-between}
 .cetba h2{font-family:var(--serif);font-size:24px;line-height:1.15;margin:0 0 4px}
 .cetba-top p{margin:0;font-size:14.5px;color:var(--muted);max-width:60ch}
 .cetba-go{flex:0 0 auto;text-decoration:none;background:var(--ink);color:var(--paper);border-radius:999px;padding:9px 16px;font-weight:600;font-size:14px}
-.cetba-prog{font-size:14px;margin:12px 0 2px}
-.cetba-prog .tr{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--rule);margin-top:5px;max-width:420px}
-.cetba-prog .tr span{display:block;height:100%}
 .cetba-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px 18px;margin-top:12px}
 .cetba-grid h3{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:0 0 6px;padding-bottom:4px;border-bottom:1px solid var(--rule)}
 .cetba-grid ol{list-style:none;margin:0;padding:0}
@@ -226,10 +232,6 @@ body.searching .era{margin-top:10px;padding-top:20px}
 .cetba-grid a .n{color:var(--muted);font-size:12px;min-width:1.6em;text-align:right}
 .cetba-grid a .t{flex:1}
 .cetba-grid a small{display:block;color:var(--muted);font-size:12px}
-.cs{flex:0 0 auto;display:inline-block;width:10px;height:10px;border-radius:50%;border:1.5px solid var(--rule);background:transparent;align-self:center}
-.cs.ok{background:var(--ok);border-color:var(--ok)}.cs.mid{background:var(--mid);border-color:var(--mid)}.cs.no{background:var(--no);border-color:var(--no)}
-.cetba-lg{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:12px;font-size:12.5px;color:var(--muted)}
-.cetba-lg span{display:inline-flex;align-items:center;gap:6px}
 .bar-in a.pbtn{text-decoration:none;background:var(--mine-line)}
 @media (max-width:900px){.cetba-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:520px){.cetba-grid{grid-template-columns:1fr}.cetba-go{width:100%;text-align:center}}
@@ -253,22 +255,21 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
 <header class="hero">
   <h1>Literární historie<br>k maturitě</h1>
   <p>Všechno, co katalog CERMAT (část C) vyžaduje z literární historie: epochy, směry, skupiny, všichni autoři ze seznamu a jejich klíčová díla. Seřazeno chronologicky, jak se to vyvíjelo.</p>
+  <p>U každého autora si označ <b>✓ umím / ~ napůl / ✗ neumím</b>. Tlačítkem <b>Co mi nejde</b> nahoře pak uvidíš jen to, co ještě potřebuješ dohnat.</p>
   <section class="cetba" aria-labelledby="cetbaH">
     <div class="cetba-top">
       <div>
         <h2 id="cetbaH">Moje četba k maturitě</h2>
-        <p>20 děl ze školního seznamu (jaro 2027) – každé má rozbor podle listu <i>Analýza – zpracování</i>. Barva ukazuje, jak ho umíš.</p>
+        <p>20 děl ze školního seznamu (jaro 2027) – každé má rozbor podle listu <i>Analýza – zpracování</i>. Klepni na dílo a otevře se jeho rozbor.</p>
       </div>
       <a class="cetba-go" href="rozbory.html">Otevřít rozbory →</a>
     </div>
-    <div class="cetba-prog" id="cetbaProg"></div>
     <div class="cetba-grid" id="cetbaGrid"></div>
-    <div class="cetba-lg"><span><i class="cs ok"></i>umím vše</span><span><i class="cs mid"></i>rozpracované</span><span><i class="cs no"></i>něco mi nejde</span><span><i class="cs"></i>zatím neoznačeno</span></div>
   </section>
   <div class="legend">
     <span><i class="sw hl"></i> nejdůležitější – v testech se objevuje nejčastěji</span>
   </div>
-  <div class="pbar"><span id="pTxt">Umím 0 autorů</span><div class="tr"><div class="fl" id="pFill"></div></div></div>
+  <div class="pbar"><span id="pTxt">Umím 0 autorů</span><div class="tr"><div class="fl" id="pFill" style="background:var(--ok)"></div><div class="fl" id="pMid" style="background:#D9A21B"></div><div class="fl" id="pNo" style="background:var(--bad)"></div></div><div class="lg" id="pLg"></div></div>
   <nav class="ribbon" id="ribbon" aria-label="Časová osa epoch"></nav>
 </header>
 
@@ -276,6 +277,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
   <div class="bar-in">
     <div class="seg" role="group" aria-label="Režim zobrazení">
       <button id="mAll" aria-pressed="true">Vše</button>
+      <button id="mWeak" aria-pressed="false">Co mi nejde</button>
       <button id="mQuiz" aria-pressed="false">Zkoušení</button>
     </div>
     <button class="pbtn" id="practice">Procvičovat</button>
@@ -316,23 +318,14 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
 
 <script src="rozbory-data.js"></script>
 <script>
-/* ---- karta „Moje četba“: 20 děl se stavem z rozborů ---- */
+/* ---- karta „Moje četba“: 20 děl ze školního seznamu ---- */
 (function(){
   if(typeof ROZBORY==="undefined")return;
   const CAT={A:"Do konce 18. století",B:"19. století",C:"Světová 20. a 21. st.",D:"Česká 20. a 21. st."};
-  let st={};try{st=JSON.parse(localStorage.getItem("rozbory-stav-v1")||"{}")||{};}catch(e){}
   const e=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
-  const short=a=>a.split(" (")[0].replace(/^(.*) a (.*)$/,"$1 a $2");
-  const tot={ok:0,mid:0,no:0};
-  const stateOf=r=>{const v=[1,2,3,4,5,6,7,8].map(i=>st[r.no+"-"+i]);v.forEach(x=>{if(x)tot[x]++});
-    if(v.includes("no"))return"no";if(v.every(x=>x==="ok"))return"ok";if(v.some(Boolean))return"mid";return"";};
-  const lab={ok:"umím vše",mid:"rozpracované",no:"něco mi nejde","":"zatím neoznačeno"};
   document.getElementById("cetbaGrid").innerHTML=Object.keys(CAT).map(c=>`<div><h3>${CAT[c]}</h3><ol>${
-    ROZBORY.filter(r=>r.cat===c).map(r=>{const s=stateOf(r);return `<li><a href="rozbory.html#d${r.no}" title="${lab[s]}"><span class="n">${r.no}.</span><span class="t">${e(r.t)}<small>${e(short(r.au))}</small></span><i class="cs ${s}" aria-label="${lab[s]}"></i></a></li>`}).join("")
+    ROZBORY.filter(r=>r.cat===c).map(r=>`<li><a href="rozbory.html#d${r.no}"><span class="n">${r.no}.</span><span class="t">${e(r.t)}<small>${e(r.au.split(" (")[0])}</small></span></a></li>`).join("")
   }</ol></div>`).join("");
-  const T=ROZBORY.length*8,pc=n=>n/T*100+"%";
-  document.getElementById("cetbaProg").innerHTML=`<b>Umím ${tot.ok} ze ${T} témat</b>${tot.mid||tot.no?` · napůl ${tot.mid} · nejde ${tot.no}`:" – označuj v rozborech, co už umíš"}
-   <div class="tr"><span style="width:${pc(tot.ok)};background:var(--ok)"></span><span style="width:${pc(tot.mid)};background:var(--mid)"></span><span style="width:${pc(tot.no)};background:var(--no)"></span></div>`;
 })();
 </script>
 <script>
@@ -608,7 +601,7 @@ ERAS.forEach(e=>{
   e.au.forEach(a=>{
     if(a.g) html+=`<div class="grp">${a.g}${a.gn?`<small>${a.gn}</small>`:""}</div>`;
     html+=`<article class="au" data-nk="au:${esc(a.n)}" data-au="${esc(a.n)}" data-s="${esc((a.n+" "+a.t+" "+a.w.map(w=>w[0]).join(" ")).toLowerCase())}">
-      <div><div class="nm">${a.n}</div><div class="dt">${a.d}</div><br><button class="kbtn">✓ Umím</button><button class="nbtn">✎ Poznámka</button></div>
+      <div><div class="nm">${a.n}</div><div class="dt">${a.d}</div><br><span class="lv" role="group" aria-label="Jak mi to jde"><button class="kbtn" data-v="ok" aria-pressed="false">✓ umím</button><button class="kbtn" data-v="mid" aria-pressed="false">~ napůl</button><button class="kbtn" data-v="no" aria-pressed="false">✗ neumím</button></span><button class="nbtn">✎ Poznámka</button></div>
       <div><p class="tx">${md(a.t)}</p><div class="works">${a.w.map(w=>{
         return `<span class="w${w[3]?" key":""}">${w[0]}<span class="k">${DRUH[w[1]]}</span></span>`;
       }).join("")}</div><div class="mynote"></div></div></article>`;
@@ -670,15 +663,15 @@ document.getElementById("jump").innerHTML=ERAS.map(e=>`<a href="#${e.id}" data-e
 main.addEventListener("click",ev=>{
   if(ev.target.closest(".ned"))return;
   const kb=ev.target.closest(".kbtn");
-  if(kb){const n=kb.closest(".au").dataset.au;known.has(n)?known.delete(n):known.add(n);saveKnown();renderKnown();return;}
+  if(kb){const n=kb.closest(".au").dataset.au;if(lvl[n]===kb.dataset.v)delete lvl[n];else lvl[n]=kb.dataset.v;saveKnown();renderKnown();return;}
   const nb=ev.target.closest(".nbtn");
   if(nb){openEditor(nb.closest("[data-nk]"));return;}
   const a=ev.target.closest(".au");
   if(a&&document.body.classList.contains("quiz")&&!a.classList.contains("editing")) a.classList.toggle("reveal");
 });
-const modes={mAll:"",mQuiz:"quiz"};
+const modes={mAll:"",mWeak:"weak",mQuiz:"quiz"};
 Object.keys(modes).forEach(id=>document.getElementById(id).addEventListener("click",()=>{
-  document.body.classList.remove("quiz");
+  document.body.classList.remove("quiz","weak");
   if(modes[id])document.body.classList.add(modes[id]);
   Object.keys(modes).forEach(k=>document.getElementById(k).setAttribute("aria-pressed",k===id));
   document.querySelectorAll(".au.reveal").forEach(a=>a.classList.remove("reveal"));
@@ -774,7 +767,7 @@ function download(name,text,type){
 function msg(t){const m=document.getElementById("nMsg");m.textContent=t;m.hidden=false;setTimeout(()=>m.hidden=true,3000)}
 const today=()=>new Date().toISOString().slice(0,10);
 document.getElementById("bExport").addEventListener("click",()=>{
-  download(`maturita-literatura-zaloha-${today()}.json`,JSON.stringify({app:"lit-hist",v:3,notes,known:[...known]},null,1),"application/json");
+  download(`maturita-literatura-zaloha-${today()}.json`,JSON.stringify({app:"lit-hist",v:4,notes,lvl},null,1),"application/json");
 });
 document.getElementById("bTxt").addEventListener("click",()=>{
   let t="MOJE POZNÁMKY – LITERÁRNÍ HISTORIE\n";
@@ -790,7 +783,7 @@ fi.addEventListener("change",()=>{
     const d=JSON.parse(t);if(d.app!=="lit-hist")throw 0;
     const n=Object.keys(d.notes||{}).length;
     if(!confirm(`Záloha obsahuje ${n} poznámek. Nahradit tím současná data?`))return;
-    notes=d.notes||{};known=new Set(d.known||[]);saveNotes();saveKnown();renderNotes();renderKnown();msg("Záloha nahrána.");
+    notes=d.notes||{};lvl=d.lvl||Object.fromEntries((d.known||[]).map(n=>[n,"ok"]));saveNotes();saveKnown();renderNotes();renderKnown();msg("Záloha nahrána.");
   }).catch(()=>msg("Tohle není záloha z tohoto souboru.")).finally(()=>fi.value="");
 });
 document.getElementById("nlist").addEventListener("click",ev=>{
@@ -802,16 +795,22 @@ document.getElementById("nlist").addEventListener("click",ev=>{
 renderNotes();
 
 /* ===================== KNOWN ===================== */
-let known=new Set();
-try{const k=localStorage.getItem("lit-hist-known-v1");if(k)known=new Set(JSON.parse(k));}catch(e){}
-function saveKnown(){try{localStorage.setItem("lit-hist-known-v1",JSON.stringify([...known]));}catch(e){}}
+/* jak mi autor jde: ok = umím, mid = napůl, no = neumím */
+let lvl={};
+try{const l=localStorage.getItem("lit-hist-lvl-v1");if(l)lvl=JSON.parse(l)||{};else{const k=localStorage.getItem("lit-hist-known-v1");if(k)JSON.parse(k).forEach(n=>lvl[n]="ok");}}catch(e){}
+function saveKnown(){try{localStorage.setItem("lit-hist-lvl-v1",JSON.stringify(lvl));}catch(e){}}
 const TOTAL_AU=ERAS.reduce((n,e)=>n+e.au.length,0);
 function renderKnown(){
-  document.querySelectorAll(".au").forEach(a=>{const k=known.has(a.dataset.au);a.classList.toggle("known",k);a.querySelector(".kbtn").textContent=k?"✓ Umím":"Umím?";});
-  ERAS.forEach(e=>{const k=e.au.filter(a=>known.has(a.n)).length;document.querySelector(`[data-prog="${e.id}"]`).textContent=`umím ${k} z ${e.au.length}`;});
-  const k=[...known].filter(n=>AU_ERA[n]).length;
-  document.getElementById("pTxt").textContent=`Umím ${k} z ${TOTAL_AU} autorů (${Math.round(k/TOTAL_AU*100)} %)`;
-  document.getElementById("pFill").style.width=(k/TOTAL_AU*100)+"%";
+  document.querySelectorAll(".au").forEach(a=>{const v=lvl[a.dataset.au]||"";["ok","mid","no"].forEach(x=>a.classList.toggle("lv-"+x,v===x));a.querySelectorAll(".kbtn").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));});
+  ERAS.forEach(e=>{const c=v=>e.au.filter(a=>lvl[a.n]===v).length,w=c("mid")+c("no");
+    document.querySelector(`[data-prog="${e.id}"]`).textContent=`umím ${c("ok")} z ${e.au.length}`+(w?` · nejde ${w}`:"");
+    document.getElementById(e.id).classList.toggle("no-weak",!w);});
+  const c=v=>Object.keys(lvl).filter(n=>AU_ERA[n]&&lvl[n]===v).length,ok=c("ok"),mid=c("mid"),no=c("no");
+  document.getElementById("pTxt").innerHTML=`<b>Umím ${ok} z ${TOTAL_AU} autorů</b> (${Math.round(ok/TOTAL_AU*100)} %)`;
+  document.getElementById("pFill").style.width=(ok/TOTAL_AU*100)+"%";
+  document.getElementById("pMid").style.width=(mid/TOTAL_AU*100)+"%";
+  document.getElementById("pNo").style.width=(no/TOTAL_AU*100)+"%";
+  document.getElementById("pLg").innerHTML=`<span>✓ umím ${ok}</span><span>~ napůl ${mid}</span><span>✗ neumím ${no}</span><span>neoznačeno ${TOTAL_AU-ok-mid-no}</span>`;
 }
 renderKnown();
 
@@ -863,7 +862,8 @@ function qGenre(){
 }
 function genRound(scope,n=10){
   let aus=AUS;
-  if(scope==="unknown")aus=AUS.filter(a=>!known.has(a.n));
+  if(scope==="unknown")aus=AUS.filter(a=>lvl[a.n]!=="ok");
+  else if(scope==="weak")aus=AUS.filter(a=>lvl[a.n]==="no"||lvl[a.n]==="mid");
   else if(ERA_NAME[scope])aus=AUS.filter(a=>a.era===scope);
   const out=[],seen=new Set();
   for(let t=0;out.length<n&&t<400;t++){
@@ -896,7 +896,8 @@ function setup(){
   <label for="pScope">Z čeho</label>
   <select id="pScope">
     <option value="all">Všechno (autoři, díla, směry, figury)</option>
-    <option value="unknown">Jen autoři, které ještě neumím</option>
+    <option value="weak">Jen autoři, co mi nejdou (napůl / neumím)</option>
+    <option value="unknown">Všichni autoři, které ještě neumím</option>
     <option value="smery">Literární směry podle popisu</option>
     <option value="teorie">Tropy, figury a žánry</option>
     <optgroup label="Jedna epocha">${ERAS.map(e=>`<option value="${e.id}">${e.name}</option>`).join("")}</optgroup>

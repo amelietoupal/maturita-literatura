@@ -315,6 +315,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
     <summary>❓ Jak to funguje</summary>
     <ul>
       <li><b>Autor:</b> nahoře <b>👤 O autorovi</b> (život, směr, styl), pod tím <b>📖 Díla</b> – každé dílo má svůj popis. Méně důležitá díla rozbalíš přes „+ další díla“.</li>
+      <li><b>Žlutě</b> jsou předem zvýrazněné nejdůležitější pojmy – je to tvůj zvýrazňovač, takže každé zvýraznění klepnutím přebarvíš nebo odebereš; všechna najednou smažeš v panelu Poznámky.</li>
       <li><b>Hlavní text</b> je to, co potřebuješ umět; podrobnosti jsou schované pod <b>+ doplňující</b>. <span class="hlk">Zvýrazněný název</span> = klíčové dílo.</li>
       <li><b>Poznámky:</b> „✎ Poznámka k autorovi“ a u každého díla „✎ poznámka k dílu“. Všechny najdeš i v panelu <b>Poznámky</b> vpravo dole.</li>
       <li><b>Jak mi to jde:</b> na konci každého autora označ ✓ umím / ~ napůl / ✗ neumím. Přepínač <b>Co mi nejde</b> pak ukáže jen to, co potřebuješ dohnat.</li>
@@ -366,6 +367,12 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
         <button id="bImport">Nahrát zálohu</button>
         <button id="bTxt">Stáhnout poznámky jako text</button>
       </div>
+      <p class="note"><b>Zvýraznění:</b> nejdůležitější pojmy jsou předem zvýrazněné – jednotlivé odebereš klepnutím na ně (Odebrat).</p>
+      <div class="actions">
+        <button id="hlPre">Smazat předem daná zvýraznění</button>
+        <button id="hlAll">Smazat všechna zvýraznění</button>
+        <button id="hlBack">Vrátit předem daná zvýraznění</button>
+      </div>
       <input type="file" id="fImport" accept=".json,application/json" hidden>
       <p class="note" id="nMsg" hidden></p>
       <div class="gen"><b>Obecné poznámky</b><textarea id="genNote" placeholder="Sem si piš cokoli – co se zeptat učitelky, co zopakovat, souvislosti…"></textarea><div class="nst" id="genSt"></div></div>
@@ -375,6 +382,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
 </div>
 
 <script src="psani.js"></script>
+<script src="predzvyrazneni.js"></script>
 <script src="zaloha.js"></script>
 <script>
 
@@ -632,7 +640,7 @@ let notes={};
 try{const n=localStorage.getItem(NKEY);if(n)notes=JSON.parse(n)||{};}catch(e){}
 function saveNotes(){try{localStorage.setItem(NKEY,JSON.stringify(notes));return true;}catch(e){return false;}}
 
-const md=s=>s.replace(/\*\*(.+?)\*\*/g,"$1").replace(/__(.+?)__/g,"<b>$1</b>"); // **…** se nezvýrazňuje (zvýrazňuje si každý sám), __…__ = nadpis v textu
+const md=s=>s.replace(/\*\*(.+?)\*\*/g,'<span class="pre">$1</span>').replace(/__(.+?)__/g,"<b>$1</b>"); // **…** = nejdůležitější pojem → předem dané zvýraznění (lze odebrat), __…__ = nadpis v textu
 const mainP=s=>String(s||"").split("||")[0],extraP=s=>String(s||"").split("||")[1]||""; // hlavní || doplňující
 const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
 const ALL=[]; // flat works
@@ -797,9 +805,14 @@ document.addEventListener("click",e=>{
   if(!e.target.closest(".hlbar")&&selHl)hlHide();
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!hlbar.hidden)hlHide();});
+// nejdůležitější pojmy předem zvýrazněné zvýrazňovačem (max. 3 v textu o autorovi, jinde 2)
+if(PreHL.seed([...document.querySelectorAll("#main [data-hk]")],hls,"lit-hist-hl-seed-v1",el=>el.classList.contains("tx")?3:2))storeHl();
 const TE=TextEdit.init({key:"lit-hist-text-v1",els:[...document.querySelectorAll("#main [data-hk]")],btn:document.getElementById("psaniBtn"),
   onRevert:hlPaint,onStart:()=>{document.getElementById("mAll").click();hlHide();}});
 paintAllHl();
+document.getElementById("hlPre").onclick=()=>{if(!confirm("Smazat všechna předem daná zvýraznění? Tvoje vlastní zůstanou."))return;PreHL.removePresets(hls);storeHl();paintAllHl();msg("Předem daná zvýraznění smazána.");};
+document.getElementById("hlAll").onclick=()=>{if(!confirm("Smazat úplně všechna zvýraznění (i tvoje vlastní)?"))return;Object.keys(hls).forEach(k=>delete hls[k]);storeHl();paintAllHl();msg("Všechna zvýraznění smazána.");};
+document.getElementById("hlBack").onclick=()=>{if(!confirm("Vrátit předem daná zvýraznění tam, kde nemáš vlastní? Stránka se znovu načte."))return;PreHL.resetSeed("lit-hist-hl-seed-v1");location.reload();};
 // při tisku rozbalit doplňující informace
 window.addEventListener("beforeprint",()=>document.querySelectorAll("details.dop").forEach(d=>d.open=true));
 

@@ -205,7 +205,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
       <li><b>✎ Psát do textu:</b> cokoli v rozboru dopíšeš, smažeš nebo přepíšeš; původní text odstavce jde vrátit.</li>
       <li><b>Procvičovat:</b> otázky z rozborů (autor, druh, žánr, vypravěč, místo, směr, postavy).</li>
       <li>Body 5 a 7 se u zkoušky týkají konkrétní ukázky – tady jsou pasáže, které se dávají nejčastěji.</li>
-      <li>Nic není předem zvýrazněné – důležité pojmy si zvýrazni sama zvýrazňovačem.</li>
+      <li><b>Žlutě</b> jsou předem zvýrazněné nejdůležitější pojmy – je to tvůj zvýrazňovač, takže každé klepnutím odebereš nebo přebarvíš; všechna najednou smažeš úplně dole.</li>
       <li>Vše se ukládá jen v tomhle prohlížeči – <b>záloha</b> a <b>tisk</b> jsou úplně dole.</li>
     </ul>
   </details>
@@ -237,6 +237,8 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
   <h2 id="zalH">Záloha a tisk</h2>
   <p>Označení, zvýraznění, poznámky a úpravy textu se ukládají jen v tomhle prohlížeči. Záloha obsahuje všechno z rozborů i z literární historie – stáhni si ji občas, ať o nic nepřijdeš (a ať to můžeš přenést na jiné zařízení).</p>
   <button class="btn" id="zExp">Stáhnout zálohu</button> <button class="btn" id="zImp">Nahrát zálohu</button> <button class="btn" id="print">Tisk / PDF</button>
+  <p style="margin-top:12px"><b>Zvýraznění:</b> nejdůležitější pojmy jsou předem zvýrazněné tvým zvýrazňovačem – jednotlivé odebereš klepnutím na ně.</p>
+  <button class="btn" id="hlPre">Smazat předem daná zvýraznění</button> <button class="btn" id="hlAll">Smazat všechna zvýraznění</button> <button class="btn" id="hlBack">Vrátit předem daná</button>
   <input type="file" id="zFile" accept=".json,application/json" hidden>
   <span id="zMsg" class="tip"></span>
 </section>
@@ -247,11 +249,12 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
 
 <script src="rozbory-data.js"></script>
 <script src="psani.js"></script>
+<script src="predzvyrazneni.js"></script>
 <script src="zaloha.js"></script>
 <script>
 const CATS={A:"Literatura do konce 18. století",B:"Literatura 19. století",C:"Světová literatura 20. a 21. století",D:"Česká literatura 20. a 21. století"};
 const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-const md=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"$1").replace(/\*(.+?)\*/g,"<i>$1</i>");
+const md=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<span class="pre">$1</span>').replace(/\*(.+?)\*/g,"<i>$1</i>"); // **…** = předem dané zvýraznění (lze odebrat)
 const list=a=>`<ul class="li">${a.map(x=>`<li>${md(x)}</li>`).join("")}</ul>`;
 const row=(k,v)=>`<tr><td class="k">${k}</td><td>${Array.isArray(v)?list(v):md(v)}</td></tr>`;
 const pairs=(h1,h2,a)=>`<div class="tw"><table><thead><tr><th style="width:32%">${h1}</th><th>${h2}</th></tr></thead><tbody>${a.map((p,i)=>`<tr><td>${i+1}. ${md(p[0])}</td><td>${md(p[1])}</td></tr>`).join("")}</tbody></table></div>`;
@@ -422,6 +425,8 @@ main.addEventListener("click",e=>{
   if(!e.target.closest(".hlbar")&&selHl)hideBar();
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape")hideBar();});
+// nejdůležitější pojmy předem zvýrazněné zvýrazňovačem (max. 2 na políčko)
+if(PreHL.seed([...main.querySelectorAll("[data-hk]")],hls,"rozbory-hl-seed-v1",()=>2))store(HKEY,hls);
 const TE=TextEdit.init({key:"rozbory-text-v1",els:[...main.querySelectorAll("[data-hk]")],btn:document.getElementById("psaniBtn"),
   onRevert:el=>paintBookHl(el.closest("details")),onStart:hideBar});
 books.forEach(paintBookHl);
@@ -545,6 +550,9 @@ cvIn.addEventListener("click",e=>{
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&cv.classList.contains("open"))cvClose();});
 
+document.getElementById("hlPre").onclick=()=>{if(!confirm("Smazat všechna předem daná zvýraznění? Tvoje vlastní zůstanou."))return;PreHL.removePresets(hls);store(HKEY,hls);books.forEach(paintBookHl);};
+document.getElementById("hlAll").onclick=()=>{if(!confirm("Smazat úplně všechna zvýraznění (i tvoje vlastní)?"))return;Object.keys(hls).forEach(k=>delete hls[k]);store(HKEY,hls);books.forEach(paintBookHl);};
+document.getElementById("hlBack").onclick=()=>{if(!confirm("Vrátit předem daná zvýraznění tam, kde nemáš vlastní? Stránka se znovu načte."))return;PreHL.resetSeed("rozbory-hl-seed-v1");location.reload();};
 document.getElementById("zExp").onclick=()=>Zaloha.export();
 const zf=document.getElementById("zFile");
 document.getElementById("zImp").onclick=()=>zf.click();

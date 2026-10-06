@@ -37,14 +37,27 @@ mark{background:linear-gradient(transparent 55%,var(--hl) 55%);color:inherit;pad
 a{color:inherit}
 button{font:inherit;color:inherit}
 
-.hero{max-width:1100px;margin:0 auto;padding:32px 16px 8px}
+.tabsnav{background:var(--card);border-bottom:1px solid var(--rule);font-family:var(--sans)}
+.tabsnav-in{max-width:1100px;margin:0 auto;padding:0 12px;display:flex;gap:4px}
+.tabsnav a{flex:1 1 0;max-width:260px;text-align:center;text-decoration:none;color:var(--muted);padding:11px 8px 9px;border-bottom:3px solid transparent;font-weight:600;font-size:15px;white-space:nowrap}
+.tabsnav a small{display:block;font-weight:400;font-size:11.5px}
+.tabsnav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--ink)}
+.help{margin:12px 0 4px;font-family:var(--sans);font-size:14.5px;max-width:68ch}
+.help summary{cursor:pointer;font-weight:600;color:#2A48A8;padding:4px 0}
+.help ul{margin:6px 0 0;padding-left:1.1em}
+.help li{margin:5px 0}
+.hero{max-width:1100px;margin:0 auto;padding:22px 16px 8px}
+.bar-in .row2{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:600}
+.tbtn{border:1px solid var(--rule);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-family:var(--sans);font-size:13.5px;cursor:pointer}
+#psaniBtn[aria-pressed="true"]{background:#7C3AED;border-color:#7C3AED;color:#fff}
 .hero .back{font-family:var(--sans);font-size:14px;color:var(--muted);text-decoration:none}
 .hero .back:hover{text-decoration:underline}
-.hero h1{font-size:clamp(32px,6.5vw,58px);line-height:1.03;font-weight:800;letter-spacing:-.02em;margin:10px 0 12px}
+.hero h1{font-size:clamp(30px,6vw,52px);line-height:1.05;font-weight:800;letter-spacing:-.02em;margin:0 0 8px}
 .hero p{font-family:var(--sans);color:var(--muted);max-width:66ch;margin:0 0 6px;font-size:15px}
 
 .bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
-.bar-in{max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-family:var(--sans)}
+.bar-in{max-width:1100px;margin:0 auto;padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;font-family:var(--sans)}
 .search{flex:1 1 200px;min-width:150px;border:1px solid var(--rule);border-radius:999px;padding:8px 14px;background:var(--card);font-family:var(--sans);font-size:14px;color:var(--ink)}
 .btn{border:1px solid var(--rule);background:var(--card);border-radius:999px;padding:7px 13px;font-size:14px;cursor:pointer;font-family:var(--sans)}
 .btn:hover{border-color:var(--muted)}
@@ -97,12 +110,12 @@ details.book.lv-ok{border-left-color:var(--ok)}
 details.book.lv-mid{border-left-color:var(--mid)}
 details.book.lv-no{border-left-color:var(--no)}
 .hlcount{font-family:var(--sans);font-size:12.5px;color:var(--muted);align-self:center;margin-left:4px}
-.prog{max-width:1100px;margin:4px auto 0;padding:0 16px;font-family:var(--sans);font-size:14px}
+.prog{margin:10px 0 0;font-family:var(--sans);font-size:14px}
 .prog .tr{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--rule);margin:6px 0 4px;max-width:420px}
 .prog .tr span{display:block;height:100%}
 .prog .lg{display:flex;flex-wrap:wrap;gap:2px 14px;color:var(--muted);font-size:13px}
 .flt{display:inline-flex;border:1px solid var(--rule);border-radius:999px;overflow:hidden;background:var(--card)}
-.flt button{border:0;background:none;padding:7px 12px;font-size:14px;cursor:pointer;font-family:var(--sans)}
+.flt button{border:0;background:none;padding:6px 11px;font-size:13.5px;cursor:pointer;font-family:var(--sans)}
 .flt button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 /* psaní do textu */
 .psani [contenteditable]{outline:1px dashed #8B5CF6;outline-offset:2px;border-radius:3px;cursor:text}
@@ -173,30 +186,43 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
 </head>
 <body>
 
+<nav class="tabsnav" aria-label="Části webu"><div class="tabsnav-in">
+  <a href="index.html">📚 Literatura <small>látka CERMAT</small></a>
+  <a href="rozbory.html" aria-current="page">📖 Moje četba <small>20 rozborů</small></a>
+</div></nav>
+
 <header class="hero">
-  <a class="back" href="index.html">← Literární historie k maturitě</a>
-  <h1>Rozbory mých<br>maturitních děl</h1>
-  <p>Všech 20 děl ze seznamu k MZ (jaro 2027), zpracovaných podle listu <b>ANALÝZA literárního díla – ZPRACOVÁNÍ</b>: kompoziční rovina, čas a prostor, témata a děj, postavy a vypravěč, ukázka v kontextu, jazyk a literárně-historický kontext.</p>
-  <p><b>U každé knihy si označ, jak ji umíš</b> – ✓ umím, ~ napůl, ✗ neumím. <b>Zvýrazňovač:</b> označ v textu slova (tažením prstem nebo myší) a vyber barvu dole; na zvýraznění klepni, když ho chceš odebrat. Vše se ukládá v tomhle prohlížeči na tomhle zařízení.</p>
-  <p><b>Procvičovat četbu:</b> otázky z tvých rozborů (autor, druh, žánr, vypravěč, místo děje, směr, postavy) – celé téma nebo rychlé kolo. Úplně dole je <b>záloha</b> všech tvých dat.</p>
-  <p><b>Psaní do textu:</b> tlačítkem <b>✎ Psát do textu</b> můžeš v rozboru cokoli dopsat, smazat nebo přepsat. Původní text odstavce jde kdykoli vrátit.</p>
-  <p>Zvýrazněné pojmy jsou to, co u ústní zkoušky nejvíc chtějí slyšet. Body 5 a 7 se u zkoušky vztahují ke konkrétní ukázce – tady najdeš pasáže, které se jako ukázky dávají nejčastěji, a co v nich obvykle převládá.</p>
+  <h1>Moje četba</h1>
+  <p>20 děl ze školního seznamu (jaro 2027), každé rozebrané podle listu <i>Analýza – zpracování</i>.</p>
+  <div class="prog" id="prog"></div>
+  <details class="help">
+    <summary>❓ Jak to funguje</summary>
+    <ul>
+      <li>Klepni na knihu – rozbalí se rozbor. Je rozdělený na <b>📖 Dílo</b> (body 1–7) a <b>👤 Autor a doba</b> (bod 8).</li>
+      <li><b>Jak mi to jde:</b> u každé knihy označ ✓ umím / ~ napůl / ✗ neumím; filtr <b>Co mi nejde</b> pak ukáže jen knihy k zopakování.</li>
+      <li><b>Poznámky:</b> u každé knihy „📖 Moje poznámky k dílu“, v bodě 8 „👤 Moje poznámky k autorovi“.</li>
+      <li><b>Zvýrazňovač:</b> označ v textu slova (tažením prstem) a dole vyber barvu; klepnutím na zvýraznění ho odebereš.</li>
+      <li><b>✎ Psát do textu:</b> cokoli v rozboru dopíšeš, smažeš nebo přepíšeš; původní text odstavce jde vrátit.</li>
+      <li><b>Procvičovat:</b> otázky z rozborů (autor, druh, žánr, vypravěč, místo, směr, postavy).</li>
+      <li><mark>Zvýrazněné pojmy</mark> chtějí u ústní zkoušky nejvíc slyšet. Body 5 a 7 se u zkoušky týkají konkrétní ukázky – tady jsou pasáže, které se dávají nejčastěji.</li>
+      <li>Vše se ukládá jen v tomhle prohlížeči – <b>záloha</b> a <b>tisk</b> jsou úplně dole.</li>
+    </ul>
+  </details>
 </header>
-<div class="prog" id="prog"></div>
 
 <div class="bar">
   <div class="bar-in">
     <input class="search" id="q" type="search" placeholder="Hledat dílo, autora, postavu, pojem…" aria-label="Hledat v rozborech">
-    <div class="flt" role="group" aria-label="Filtr knih">
-      <button data-f="" aria-pressed="true">Vše</button>
-      <button data-f="weak" aria-pressed="false">Co mi nejde</button>
-      <button data-f="none" aria-pressed="false">Neoznačené</button>
+    <button class="btn primary" id="cvicBtn">Procvičovat</button>
+    <div class="row2">
+      <div class="flt" role="group" aria-label="Filtr knih">
+        <button data-f="" aria-pressed="true">Vše</button>
+        <button data-f="weak" aria-pressed="false">Co mi nejde</button>
+        <button data-f="none" aria-pressed="false">Neoznačené</button>
+      </div>
+      <button class="tbtn" id="psaniBtn" aria-pressed="false">✎ Psát do textu</button>
+      <button class="tbtn" id="openAll" aria-pressed="false">Rozbalit vše</button>
     </div>
-    <button class="btn" id="openAll">Rozbalit vše</button>
-    <button class="btn" id="closeAll">Sbalit vše</button>
-    <button class="btn" id="print">Tisk / PDF</button>
-    <button class="btn" id="cvicBtn" style="background:var(--ink);color:var(--paper);border-color:var(--ink);font-weight:600">Procvičovat četbu</button>
-    <button class="btn" id="psaniBtn" aria-pressed="false" style="border-color:#7C3AED;color:#7C3AED;font-weight:600">✎ Psát do textu</button>
     <nav class="jump" id="jump" aria-label="Přejít na dílo"></nav>
   </div>
 </div>
@@ -207,9 +233,9 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
 <div class="hlbar" id="hlbar" hidden role="toolbar" aria-label="Zvýrazňovač"></div>
 
 <section class="zal noprint" aria-labelledby="zalH">
-  <h2 id="zalH">Záloha</h2>
+  <h2 id="zalH">Záloha a tisk</h2>
   <p>Označení, zvýraznění, poznámky a úpravy textu se ukládají jen v tomhle prohlížeči. Záloha obsahuje všechno z rozborů i z literární historie – stáhni si ji občas, ať o nic nepřijdeš (a ať to můžeš přenést na jiné zařízení).</p>
-  <button class="btn" id="zExp">Stáhnout zálohu</button> <button class="btn" id="zImp">Nahrát zálohu</button>
+  <button class="btn" id="zExp">Stáhnout zálohu</button> <button class="btn" id="zImp">Nahrát zálohu</button> <button class="btn" id="print">Tisk / PDF</button>
   <input type="file" id="zFile" accept=".json,application/json" hidden>
   <span id="zMsg" class="tip"></span>
 </section>
@@ -277,8 +303,7 @@ document.getElementById("jump").innerHTML=ROZBORY.map(r=>`<a href="#d${r.no}" st
 const books=[...document.querySelectorAll("details.book")];
 document.getElementById("jump").addEventListener("click",e=>{const a=e.target.closest("a");if(!a)return;const d=document.querySelector(a.getAttribute("href"));if(d)d.open=true;});
 if(location.hash){const d=document.querySelector(location.hash);if(d&&d.tagName==="DETAILS"){d.open=true;d.scrollIntoView();}}
-document.getElementById("openAll").onclick=()=>books.forEach(b=>b.open=true);
-document.getElementById("closeAll").onclick=()=>books.forEach(b=>b.open=false);
+document.getElementById("openAll").onclick=e=>{const all=books.every(b=>b.open);books.forEach(b=>b.open=!all);e.currentTarget.textContent=all?"Rozbalit vše":"Sbalit vše";e.currentTarget.setAttribute("aria-pressed",!all);};
 document.getElementById("print").onclick=()=>{books.forEach(b=>b.open=true);setTimeout(()=>window.print(),50);};
 
 /* ===== jak umím celou knihu ===== */

@@ -1,7 +1,7 @@
 /* Společná záloha všech dat z obou stránek (literární historie i rozbory) do jednoho souboru. */
 (function(){
   const KEYS=[
-    "lit-hist-notes-v1","lit-hist-lvl-v1","lit-hist-hl-v1","lit-hist-text-v1","lit-hist-known-v1",
+    "lit-hist-notes-v1","lit-hist-lvl-v1","lit-hist-hl-v1","lit-hist-hl-seed-v1","rozbory-hl-seed-v1","lit-hist-text-v1","lit-hist-known-v1",
     "rozbory-kniha-v1","rozbory-hl-v1","rozbory-poznamky-v1","rozbory-poznamky-autor-v1","rozbory-text-v1"
   ];
   const today=()=>new Date().toISOString().slice(0,10);

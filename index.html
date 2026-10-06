@@ -125,11 +125,12 @@ main{max-width:1100px;margin:0 auto;padding:0 20px 120px}
 .wr.key{border-left-color:var(--ink)}
 .wrh{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}
 .wt{border:0;background:none;padding:0;font-family:var(--serif);font-style:italic;font-weight:700;font-size:16.5px;color:var(--ink);cursor:pointer;text-align:left}
-.wr.key .wt::after{content:" ★";font-style:normal;font-size:11px;color:var(--muted)}
+.wr.key .wt{background:linear-gradient(transparent 60%,var(--hl-soft) 60%)} /* zvýrazněný název = klíčové dílo */
 .wrh .k{font-family:var(--sans);font-size:10.5px;color:var(--muted);border:1px solid var(--rule);border-radius:3px;padding:0 4px}
 .wnb{margin-left:auto;border:1px dashed var(--rule);background:none;border-radius:999px;padding:2px 9px;font-family:var(--sans);font-size:12px;color:var(--muted);cursor:pointer}
 .wr.has-note .wnb{border-style:solid;border-color:var(--note-line);color:var(--note-ink)}
 .wd{font-size:15.5px;line-height:1.5;margin-top:2px}
+.hlk{font-style:italic;font-weight:700;background:linear-gradient(transparent 60%,var(--hl-soft) 60%)}
 .dop{margin-top:4px;font-size:14.5px;color:var(--muted)}
 .dop summary{cursor:pointer;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--muted);list-style:none;display:inline-block;padding:1px 0}
 .dop summary::-webkit-details-marker{display:none}
@@ -314,7 +315,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
     <summary>❓ Jak to funguje</summary>
     <ul>
       <li><b>Autor:</b> nahoře <b>👤 O autorovi</b> (život, směr, styl), pod tím <b>📖 Díla</b> – každé dílo má svůj popis. Méně důležitá díla rozbalíš přes „+ další díla“.</li>
-      <li><b>Hlavní text</b> je to, co potřebuješ umět; podrobnosti jsou schované pod <b>+ doplňující</b>. ★ = klíčové dílo.</li>
+      <li><b>Hlavní text</b> je to, co potřebuješ umět; podrobnosti jsou schované pod <b>+ doplňující</b>. <span class="hlk">Zvýrazněný název</span> = klíčové dílo.</li>
       <li><b>Poznámky:</b> „✎ Poznámka k autorovi“ a u každého díla „✎ poznámka k dílu“. Všechny najdeš i v panelu <b>Poznámky</b> vpravo dole.</li>
       <li><b>Jak mi to jde:</b> na konci každého autora označ ✓ umím / ~ napůl / ✗ neumím. Přepínač <b>Co mi nejde</b> pak ukáže jen to, co potřebuješ dohnat.</li>
       <li><b>Zvýrazňovač:</b> označ v textu slova (tažením prstem) a dole vyber barvu. Na zvýraznění klepni, když ho chceš přebarvit nebo odebrat.</li>

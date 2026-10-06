@@ -204,7 +204,8 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
       <li><b>Zvýrazňovač:</b> označ v textu slova (tažením prstem) a dole vyber barvu; klepnutím na zvýraznění ho odebereš.</li>
       <li><b>✎ Psát do textu:</b> cokoli v rozboru dopíšeš, smažeš nebo přepíšeš; původní text odstavce jde vrátit.</li>
       <li><b>Procvičovat:</b> otázky z rozborů (autor, druh, žánr, vypravěč, místo, směr, postavy).</li>
-      <li><mark>Zvýrazněné pojmy</mark> chtějí u ústní zkoušky nejvíc slyšet. Body 5 a 7 se u zkoušky týkají konkrétní ukázky – tady jsou pasáže, které se dávají nejčastěji.</li>
+      <li>Body 5 a 7 se u zkoušky týkají konkrétní ukázky – tady jsou pasáže, které se dávají nejčastěji.</li>
+      <li>Nic není předem zvýrazněné – důležité pojmy si zvýrazni sama zvýrazňovačem.</li>
       <li>Vše se ukládá jen v tomhle prohlížeči – <b>záloha</b> a <b>tisk</b> jsou úplně dole.</li>
     </ul>
   </details>
@@ -250,7 +251,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
 <script>
 const CATS={A:"Literatura do konce 18. století",B:"Literatura 19. století",C:"Světová literatura 20. a 21. století",D:"Česká literatura 20. a 21. století"};
 const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-const md=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<mark>$1</mark>").replace(/\*(.+?)\*/g,"<i>$1</i>");
+const md=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"$1").replace(/\*(.+?)\*/g,"<i>$1</i>");
 const list=a=>`<ul class="li">${a.map(x=>`<li>${md(x)}</li>`).join("")}</ul>`;
 const row=(k,v)=>`<tr><td class="k">${k}</td><td>${Array.isArray(v)?list(v):md(v)}</td></tr>`;
 const pairs=(h1,h2,a)=>`<div class="tw"><table><thead><tr><th style="width:32%">${h1}</th><th>${h2}</th></tr></thead><tbody>${a.map((p,i)=>`<tr><td>${i+1}. ${md(p[0])}</td><td>${md(p[1])}</td></tr>`).join("")}</tbody></table></div>`;

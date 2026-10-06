@@ -66,6 +66,9 @@ details[open]>summary .chev{transform:rotate(90deg)}
 .body{padding:0 16px 18px}
 
 .sec{margin:20px 0 0}
+.part{margin:22px 0 0;padding:8px 12px;border-radius:6px;background:color-mix(in srgb,var(--c) 14%,var(--card));border-left:5px solid var(--c);font-family:var(--sans);font-size:15px;font-weight:700;letter-spacing:.02em}
+.part small{font-weight:400;color:var(--muted);margin-left:6px}
+.part.au{margin-top:34px}
 .sec h3{font-family:var(--sans);font-size:15px;font-weight:600;margin:0 0 8px;padding:6px 10px;background:var(--head);border-radius:5px}
 .sec h4{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--muted);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.03em}
 .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
@@ -237,6 +240,7 @@ function render(r){
   <summary><span class="no">${r.no}.</span><span class="ttl">${esc(r.t)}<small>${esc(r.au)} · ${esc(r.rok)}${r.orig?` · orig. <i>${esc(r.orig)}</i>`:""}</small></span><span class="chev" aria-hidden="true">›</span><span class="lv" role="group" aria-label="Jak umím tuto knihu"><button data-v="ok" aria-pressed="false">✓ umím</button><button data-v="mid" aria-pressed="false">~ napůl</button><button data-v="no" aria-pressed="false">✗ neumím</button><span class="hlcount"></span><span class="hlcount ncount"></span></span></summary>
   <div class="body">
   ${r.over?`<div class="warn">⚠ ${md(r.over)}</div>`:""}
+  <div class="part">📖 Dílo <small>body 1–7 · ${esc(r.t)}</small></div>
   <div class="bnote"><b>📖 Moje poznámky k dílu <i>${esc(r.t)}</i></b><textarea data-bn="${r.no}" placeholder="Poznámky k tomuto dílu – děj, postavy, motivy, citáty, co říct u zkoušky…"></textarea><div class="nst"></div><div class="pr"></div></div>
   ${sec(1,"Kompoziční rovina literárního díla",`<div class="tw"><table><tbody>
     ${row("Literární forma",r.forma)}${row("Literární druh",r.druh)}${row("Literární žánr",r.zanr)}
@@ -251,6 +255,7 @@ function render(r){
     <tr><td><b>Vyprávěcí způsoby:</b><br>${md(r.zpusoby[0])}</td><td>${md(r.zpusoby[1])}</td></tr>
     <tr><td><b>Typy promluv:</b><br>${md(r.promluvy[0])}</td><td>${md(r.promluvy[1])}</td></tr>
     <tr><td><b>Veršová výstavba</b> (jen u poezie)</td><td>${r.vers?md(r.vers):"✗ (není poezie)"}</td></tr></tbody></table></div>`)}
+  <div class="part au">👤 Autor a doba <small>bod 8 · ${esc(r.au.split(" (")[0])}</small></div>
   ${sec(8,"Literárně-historický kontext díla a autora",`<h4>A – Autor</h4><div class="tw"><table><thead><tr><th style="width:50%">Život autora</th><th>Znaky jeho psaní / tvorby</th></tr></thead><tbody><tr><td>${list(r.autor.zivot)}</td><td>${list(r.autor.znaky)}</td></tr></tbody></table></div>
     <div class="bnote anote"><b>👤 Moje poznámky k autorovi – ${esc(r.au.split(" (")[0])}</b><textarea data-an="${esc(r.au.split(" (")[0])}" placeholder="Poznámky k autorovi – život, směr, styl, další díla…"></textarea><div class="nst"></div><div class="pr"></div></div>
     <h4>B – Další díla autora</h4>${pairs("Dílo","Informace k dílu",r.dalsi)}

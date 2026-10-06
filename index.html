@@ -315,7 +315,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 20px 140px;font-family:var(--san
     <summary>❓ Jak to funguje</summary>
     <ul>
       <li><b>Autor:</b> nahoře <b>👤 O autorovi</b> (život, směr, styl), pod tím <b>📖 Díla</b> – každé dílo má svůj popis. Méně důležitá díla rozbalíš přes „+ další díla“.</li>
-      <li><b>Žlutě</b> jsou předem zvýrazněné nejdůležitější pojmy – je to tvůj zvýrazňovač, takže každé zvýraznění klepnutím přebarvíš nebo odebereš; všechna najednou smažeš v panelu Poznámky.</li>
+      <li><b>Žlutě</b> jsou předem zvýrazněné nejdůležitější pojmy – je to tvůj zvýrazňovač, takže každé zvýraznění klepnutím přebarvíš nebo odebereš, nebo označ text a dej <b>🧽 Odebrat zvýraznění</b> (guma); všechna najednou smažeš v panelu Poznámky.</li>
       <li><b>Hlavní text</b> je to, co potřebuješ umět; podrobnosti jsou schované pod <b>+ doplňující</b>. <span class="hlk">Zvýrazněný název</span> = klíčové dílo.</li>
       <li><b>Poznámky:</b> „✎ Poznámka k autorovi“ a u každého díla „✎ poznámka k dílu“. Všechny najdeš i v panelu <b>Poznámky</b> vpravo dole.</li>
       <li><b>Jak mi to jde:</b> na konci každého autora označ ✓ umím / ~ napůl / ✗ neumím. Přepínač <b>Co mi nejde</b> pak ukáže jen to, co potřebuješ dohnat.</li>
@@ -754,7 +754,7 @@ function paintAllHl(){document.querySelectorAll("[data-hk]").forEach(el=>{if(hls
 const hlOffset=(el,node,off)=>{const r=document.createRange();r.selectNodeContents(el);r.setEnd(node,off);return r.toString().length;};
 const hlbar=document.getElementById("hlbar");
 function hlShow(mode){
-  hlbar.innerHTML=`<span>${mode==="add"?"Zvýraznit:":"Zvýraznění:"}</span>${Object.keys(HLC).map(c=>`<button class="sw ${c}" data-c="${c}" aria-label="${HLC[c]}"></button>`).join("")}${mode==="add"?"":`<button class="rm" data-rm>Odebrat</button>`}`;
+  hlbar.innerHTML=`<span>${mode==="add"?"Zvýraznit:":"Zvýraznění:"}</span>${Object.keys(HLC).map(c=>`<button class="sw ${c}" data-c="${c}" aria-label="${HLC[c]}"></button>`).join("")}${mode==="add"?`<button class="rm" data-erase>🧽 Odebrat zvýraznění</button>`:`<button class="rm" data-rm>Odebrat</button>`}`;
   hlbar.hidden=false;
 }
 function hlHide(){hlbar.hidden=true;pendingRange=null;if(selHl){document.querySelectorAll(".uhl.sel").forEach(x=>x.classList.remove("sel"));selHl=null;}}
@@ -773,6 +773,12 @@ document.addEventListener("selectionchange",()=>{clearTimeout(hlT);hlT=setTimeou
 hlbar.addEventListener("mousedown",e=>e.preventDefault());
 hlbar.addEventListener("click",e=>{
   const c=e.target.closest("[data-c]"),rm=e.target.closest("[data-rm]");
+  if(pendingRange&&e.target.closest("[data-erase]")){ // guma: odebrat všechna zvýraznění v označeném úseku
+    const {k,s,e:en}=pendingRange,el=document.querySelector(`[data-hk="${CSS.escape(k)}"]`);
+    if(TE.has(k)){const r=getSelection().rangeCount?getSelection().getRangeAt(0):null;el.querySelectorAll(".uhl").forEach(m=>{if(r&&r.intersectsNode(m))m.replaceWith(...m.childNodes);});el.normalize();TE.save(el);}
+    else{const list=(hls[k]||[]).filter(h=>h.e<=s||h.s>=en);if(list.length)hls[k]=list;else delete hls[k];storeHl();hlPaint(el);}
+    getSelection().removeAllRanges();hlHide();return;
+  }
   if(pendingRange&&c&&TE.has(pendingRange.k)){ // upravený odstavec: zvýraznění se uloží přímo do textu
     const {k,s,e:en}=pendingRange,el=document.querySelector(`[data-hk="${CSS.escape(k)}"]`);
     hlWrap(el,s,en,c.dataset.c,Date.now().toString(36));TE.save(el);getSelection().removeAllRanges();hlHide();return;

@@ -205,7 +205,7 @@ footer{max-width:1100px;margin:0 auto;padding:0 16px 80px;font-family:var(--sans
       <li><b>✎ Psát do textu:</b> cokoli v rozboru dopíšeš, smažeš nebo přepíšeš; původní text odstavce jde vrátit.</li>
       <li><b>Procvičovat:</b> otázky z rozborů (autor, druh, žánr, vypravěč, místo, směr, postavy).</li>
       <li>Body 5 a 7 se u zkoušky týkají konkrétní ukázky – tady jsou pasáže, které se dávají nejčastěji.</li>
-      <li><b>Žlutě</b> jsou předem zvýrazněné nejdůležitější pojmy – je to tvůj zvýrazňovač, takže každé klepnutím odebereš nebo přebarvíš; všechna najednou smažeš úplně dole.</li>
+      <li><b>Žlutě</b> jsou předem zvýrazněné nejdůležitější pojmy – je to tvůj zvýrazňovač, takže každé klepnutím odebereš nebo přebarvíš, nebo označ text a dej <b>🧽 Odebrat zvýraznění</b> (guma); všechna najednou smažeš úplně dole.</li>
       <li>Vše se ukládá jen v tomhle prohlížeči – <b>záloha</b> a <b>tisk</b> jsou úplně dole.</li>
     </ul>
   </details>
@@ -368,7 +368,7 @@ const offsetIn=(el,node,off)=>{const r=document.createRange();r.selectNodeConten
 const bar=document.getElementById("hlbar");
 function showBar(mode){
   bar.innerHTML=mode==="add"
-    ?`<span>Zvýraznit:</span>${Object.keys(COLORS).map(c=>`<button class="sw ${c}" data-c="${c}" aria-label="${COLORS[c]}"></button>`).join("")}`
+    ?`<span>Zvýraznit:</span>${Object.keys(COLORS).map(c=>`<button class="sw ${c}" data-c="${c}" aria-label="${COLORS[c]}"></button>`).join("")}<button class="rm" data-erase>🧽 Odebrat zvýraznění</button>`
     :`<span>Zvýraznění:</span>${Object.keys(COLORS).map(c=>`<button class="sw ${c}" data-c="${c}" aria-label="změnit na ${COLORS[c]}"></button>`).join("")}<button class="rm" data-rm>Odebrat</button>`;
   bar.hidden=false;
 }
@@ -388,6 +388,12 @@ document.addEventListener("selectionchange",()=>{clearTimeout(window._hlT);windo
 bar.addEventListener("mousedown",e=>e.preventDefault());
 bar.addEventListener("click",e=>{
   const c=e.target.closest("[data-c]"),rm=e.target.closest("[data-rm]");
+  if(pendingRange&&e.target.closest("[data-erase]")){ // guma: odebrat všechna zvýraznění v označeném úseku
+    const {k,s,e:en}=pendingRange,el=document.querySelector(`[data-hk="${k}"]`);
+    if(TE.has(k)){const r=getSelection().rangeCount?getSelection().getRangeAt(0):null;el.querySelectorAll(".uhl").forEach(m=>{if(r&&r.intersectsNode(m))m.replaceWith(...m.childNodes);});el.normalize();TE.save(el);}
+    else{const list=(hls[k]||[]).filter(h=>h.e<=s||h.s>=en);if(list.length)hls[k]=list;else delete hls[k];store(HKEY,hls);}
+    getSelection().removeAllRanges();hideBar();paintBookHl(el.closest("details"));return;
+  }
   if(pendingRange&&c&&TE.has(pendingRange.k)){ // upravený odstavec: zvýraznění se uloží přímo do textu
     const {k,s,e:en}=pendingRange,el=document.querySelector(`[data-hk="${k}"]`);
     wrapRange(el,s,en,c.dataset.c,Date.now().toString(36));TE.save(el);getSelection().removeAllRanges();hideBar();paintBookHl(el.closest("details"));return;

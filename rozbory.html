@@ -199,6 +199,7 @@ td.k{color:var(--muted);font-weight:600}
 .uhl.y{background:#FFEFA0}.uhl.g{background:#CDEFD6}.uhl.p{background:#FFD9E8}.uhl.b{background:#D6E8FF}
 .hlbar .sw.y{background:#FFEFA0}.hlbar .sw.g{background:#CDEFD6}.hlbar .sw.p{background:#FFD9E8}.hlbar .sw.b{background:#D6E8FF}
 @media print{details.book{box-shadow:none}}
+.kd2{font-weight:700;letter-spacing:.04em;text-transform:uppercase;font-size:11px;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -284,7 +285,7 @@ function render(r){
        <tr><td><b>Dle gramatické osoby:</b><br>${md(r.vyp.osoba[0])}</td><td>${md(r.vyp.osoba[1])}</td></tr>
        <tr><td><b>Dle vyprávěcí roviny:</b><br>${md(r.vyp.rovina[0])}</td><td>${md(r.vyp.rovina[1])}</td></tr></tbody></table></div>`;
   return `<details class="book" id="d${r.no}" style="--c:var(--${r.cat})" data-text="${esc(JSON.stringify(r).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,""))}">
-  <summary><span class="no">${r.no}.</span><span class="ttl">${esc(r.t)}<small>${esc(r.au)} · ${esc(r.rok)}${r.orig?` · orig. <i>${esc(r.orig)}</i>`:""}</small></span><span class="chev" aria-hidden="true">›</span><span class="lv" role="group" aria-label="Jak umím tuto knihu"><button data-v="ok" aria-pressed="false">✓ umím</button><button data-v="mid" aria-pressed="false">~ napůl</button><button data-v="no" aria-pressed="false">✗ neumím</button><span class="hlcount"></span><span class="hlcount ncount"></span></span></summary>
+  <summary><span class="no">${r.no}.</span><span class="ttl">${esc(r.t)}<small><span class="kd2">📖 dílo</span> · 👤 ${esc(r.au)} · ${esc(r.rok)}${r.orig?` · orig. <i>${esc(r.orig)}</i>`:""}</small></span><span class="chev" aria-hidden="true">›</span><span class="lv" role="group" aria-label="Jak umím tuto knihu"><button data-v="ok" aria-pressed="false">✓ umím</button><button data-v="mid" aria-pressed="false">~ napůl</button><button data-v="no" aria-pressed="false">✗ neumím</button><span class="hlcount"></span><span class="hlcount ncount"></span></span></summary>
   <div class="body">
   ${r.over?`<div class="warn">⚠ ${md(r.over)}</div>`:""}
   <div class="part">📖 Dílo <small>body 1–7 · ${esc(r.t)}</small></div>

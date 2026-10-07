@@ -333,6 +333,11 @@ body{font-size:17px;line-height:1.65}
 .au > div:first-child{display:flex;flex-wrap:wrap;align-items:baseline;gap:0 10px;margin-bottom:10px}
 .au .nm{font-variant:normal;font-size:21px;letter-spacing:0;font-weight:700}
 .au .dt{font-size:13px}
+/* štítek v nadpisu karty: autor × (anonymní) dílo; názvy děl kurzívou */
+.kind{flex-basis:100%;font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:1px}
+.kind.ka{color:var(--muted)}
+.kind.kd{color:var(--note-ink)}
+.au.anon .nm{font-style:italic}
 .nbtn,.wnb{border-style:solid!important;border-color:var(--rule)}
 .wl{border-top:1px solid var(--rule)}
 .wr{border-left-width:2px}
@@ -709,7 +714,7 @@ ERAS.forEach(e=>{
   e.au.forEach(a=>{
     if(a.g) html+=`<div class="grp">${a.g}${a.gn?`<small>${a.gn}</small>`:""}</div>`;
     html+=`<article class="au${ANON_AU.has(a.n)?" anon":""}" data-nk="au:${esc(a.n)}" data-au="${esc(a.n)}" data-s="${esc((a.n+" "+a.t+" "+a.w.map(w=>w[0]).join(" ")).toLowerCase())}">
-      <div><div class="nm">${a.n}</div><div class="dt">${a.d}</div></div>
+      <div><span class="kind ${ANON_AU.has(a.n)?"kd":"ka"}">${ANON_AU.has(a.n)?"📖 Dílo":"👤 Autor"}</span><div class="nm">${a.n}</div><div class="dt">${a.d}</div></div>
       <div>${(()=>{const solo=ANON_AU.has(a.n)&&a.w.length===1;return `
         <div class="ab"><div class="labrow"><div class="lab">${ANON_AU.has(a.n)?"📖 O díle":"👤 O autorovi"}</div><button class="nbtn">✎ Poznámka k autorovi</button></div><p class="tx">${md(mainP(a.t))}</p>${extraP(a.t)?`<details class="dop"><summary>+ doplňující</summary><p class="tx2">${md(extraP(a.t))}</p></details>`:""}<div class="mynote"></div></div>
         ${solo?"":(()=>{const row=w=>{const k="w:"+a.n+"|"+w[0];return `

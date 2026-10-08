@@ -255,8 +255,8 @@ td.k{color:var(--muted);font-weight:600}
   <h2 id="zalH">Záloha a tisk</h2>
   <p>Označení, zvýraznění, poznámky a úpravy textu se ukládají jen v tomhle prohlížeči. Záloha obsahuje všechno z rozborů i z literární historie – stáhni si ji občas, ať o nic nepřijdeš (a ať to můžeš přenést na jiné zařízení).</p>
   <button class="btn" id="zExp">Stáhnout zálohu</button> <button class="btn" id="zImp">Nahrát zálohu</button> <button class="btn" id="print">Tisk / PDF</button>
-  <p style="margin-top:12px"><b>Zvýraznění:</b> nejdůležitější pojmy jsou předem zvýrazněné tvým zvýrazňovačem – jednotlivé odebereš klepnutím na ně.</p>
-  <button class="btn" id="hlPre">Smazat předem daná zvýraznění</button> <button class="btn" id="hlAll">Smazat všechna zvýraznění</button> <button class="btn" id="hlBack">Vrátit předem daná</button>
+  <p style="margin-top:12px"><b>Zvýraznění:</b> předem daná zvýraznění nejdůležitějších pojmů jsou ve výchozím stavu vypnutá – zapneš je přepínačem. Tvoje vlastní zvýraznění se nemění.</p>
+  <button class="btn" id="hlPre">Smazat předem daná zvýraznění</button> <button class="btn" id="hlAll">Smazat všechna zvýraznění</button> <button class="btn" id="hlBack">Vrátit předem daná</button> <button class="btn" id="hlPreToggle" aria-pressed="false">🖍 Předem daná zvýraznění</button>
   <p style="margin-top:12px"><b>Automatická záloha:</b> stránka si každý den sama uloží kopii všech tvých dat (posledních 7 dní).</p>
   <select id="autoSel" aria-label="Automatická záloha"></select> <button class="btn" id="autoRes">Vrátit automatickou zálohu</button>
   <div id="trvList"></div>
@@ -383,7 +383,9 @@ function wrapRange(el,s,e,cls,id){
   todo.forEach(([n,a,z])=>{let t=n;if(a>0)t=t.splitText(a);if(z-a<t.data.length)t.splitText(z-a);
     const m=document.createElement("span");m.className="uhl "+cls;m.dataset.id=id;t.replaceWith(m);m.appendChild(t);});
 }
-function paintEl(el){if(TE.has(el.dataset.hk))return;unwrap(el);(hls[el.dataset.hk]||[]).forEach(h=>wrapRange(el,h.s,h.e,h.c,h.id));}
+// předem daná zvýraznění se kreslí jen když jsou zapnutá (výchozí: vypnutá; vlastní zvýraznění vždy)
+let PRE_ON=(()=>{try{return localStorage.getItem("rozbory-pre-v1")==="1";}catch(e){return false;}})();
+function paintEl(el){if(TE.has(el.dataset.hk))return;unwrap(el);(hls[el.dataset.hk]||[]).filter(h=>PRE_ON||!h.pre).forEach(h=>wrapRange(el,h.s,h.e,h.c,h.id));}
 function paintBookHl(b){
   b.querySelectorAll("[data-hk]").forEach(el=>{if(hls[el.dataset.hk]||el.querySelector(".uhl"))paintEl(el);});
   const n=new Set([...b.querySelectorAll(".body .uhl")].map(x=>x.dataset.id)).size;
@@ -467,6 +469,8 @@ Trvalost.show({TE,list:document.getElementById("trvList"),
 (()=>{const sel=document.getElementById("autoSel"),sn=Trvalost.autoSnaps();sel.innerHTML=sn.length?sn.map((x,i)=>`<option value="${i}">${x.d}</option>`).reverse().join(""):"<option>zatím žádná</option>";
   document.getElementById("autoRes").onclick=()=>{if(!sn.length)return;if(!confirm("Vrátit všechna data do stavu ze dne "+sn[sel.value].d+"? Stránka se znovu načte."))return;Trvalost.restoreAuto(+sel.value);location.reload();};})();
 books.forEach(paintBookHl);
+(()=>{const b=document.getElementById("hlPreToggle"),paint=()=>{b.textContent=PRE_ON?"🖍 Předem daná zvýraznění: zapnutá (vypnout)":"🖍 Předem daná zvýraznění: vypnutá (zapnout)";b.setAttribute("aria-pressed",PRE_ON);};
+  b.onclick=()=>{PRE_ON=!PRE_ON;try{localStorage.setItem("rozbory-pre-v1",PRE_ON?"1":"0");}catch(e){}paint();books.forEach(paintBookHl);};paint();})();
 
 /* ===== poznámky ke knize ===== */
 const NKEY="rozbory-poznamky-v1";

@@ -257,6 +257,9 @@ td.k{color:var(--muted);font-weight:600}
   <button class="btn" id="zExp">Stáhnout zálohu</button> <button class="btn" id="zImp">Nahrát zálohu</button> <button class="btn" id="print">Tisk / PDF</button>
   <p style="margin-top:12px"><b>Zvýraznění:</b> nejdůležitější pojmy jsou předem zvýrazněné tvým zvýrazňovačem – jednotlivé odebereš klepnutím na ně.</p>
   <button class="btn" id="hlPre">Smazat předem daná zvýraznění</button> <button class="btn" id="hlAll">Smazat všechna zvýraznění</button> <button class="btn" id="hlBack">Vrátit předem daná</button>
+  <p style="margin-top:12px"><b>Automatická záloha:</b> stránka si každý den sama uloží kopii všech tvých dat (posledních 7 dní).</p>
+  <select id="autoSel" aria-label="Automatická záloha"></select> <button class="btn" id="autoRes">Vrátit automatickou zálohu</button>
+  <div id="trvList"></div>
   <input type="file" id="zFile" accept=".json,application/json" hidden>
   <span id="zMsg" class="tip"></span>
 </section>
@@ -269,6 +272,7 @@ td.k{color:var(--muted);font-weight:600}
 <script src="psani.js"></script>
 <script src="predzvyrazneni.js"></script>
 <script src="zaloha.js"></script>
+<script src="trvalost.js"></script>
 <script>
 const CATS={A:"Literatura do konce 18. století",B:"Literatura 19. století",C:"Světová literatura 20. a 21. století",D:"Česká literatura 20. a 21. století"};
 const esc=s=>String(s??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -366,6 +370,10 @@ function updateCats(){
 /* ===== zvýrazňovač ===== */
 // každá buňka / odstavec rozboru má stabilní klíč; zvýraznění = rozsah znaků v jejím textu
 books.forEach(b=>b.querySelectorAll(".body td, .body p.dej, .body .warn").forEach((el,i)=>el.dataset.hk=b.id+"-"+i));
+// ochrana dat: když se rozbor upraví (přibude řádek apod.), poznámky, psaní do textu a zvýraznění se přesunou s textem – viz trvalost.js
+Trvalost.run({id:"rozbory",els:[...main.querySelectorAll("[data-hk]")],text:"rozbory-text-v1",hl:HKEY,
+  notes:[{key:"rozbory-poznamky-v1",valid:new Set(books.map(b=>b.id.slice(1)))},{key:"rozbory-poznamky-autor-v1",valid:new Set([...main.querySelectorAll("[data-an]")].map(e=>e.dataset.an))}],
+  keys:Zaloha.AUTO_KEYS});
 let hls=load(HKEY),pendingRange=null,selHl=null;
 const COLORS={y:"žlutá",g:"zelená",p:"růžová",b:"modrá"};
 function unwrap(el){el.querySelectorAll(".uhl").forEach(m=>{m.replaceWith(...m.childNodes);});el.normalize();}
@@ -453,6 +461,11 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape")hideBar();});
 if(PreHL.seed([...main.querySelectorAll("[data-hk]")],hls,"rozbory-hl-seed-v1",()=>2))store(HKEY,hls);
 const TE=TextEdit.init({key:"rozbory-text-v1",els:[...main.querySelectorAll("[data-hk]")],btn:document.getElementById("psaniBtn"),
   onRevert:el=>paintBookHl(el.closest("details")),onStart:hideBar});
+Trvalost.show({TE,list:document.getElementById("trvList"),
+  label:el=>{const b=el.closest("details.book");return b?b.querySelector(".ttl").firstChild.textContent:"";},
+  reveal:el=>{const b=el.closest("details.book");if(b)b.open=true;}});
+(()=>{const sel=document.getElementById("autoSel"),sn=Trvalost.autoSnaps();sel.innerHTML=sn.length?sn.map((x,i)=>`<option value="${i}">${x.d}</option>`).reverse().join(""):"<option>zatím žádná</option>";
+  document.getElementById("autoRes").onclick=()=>{if(!sn.length)return;if(!confirm("Vrátit všechna data do stavu ze dne "+sn[sel.value].d+"? Stránka se znovu načte."))return;Trvalost.restoreAuto(+sel.value);location.reload();};})();
 books.forEach(paintBookHl);
 
 /* ===== poznámky ke knize ===== */

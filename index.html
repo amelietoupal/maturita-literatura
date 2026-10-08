@@ -423,6 +423,9 @@ body{font-size:17px;line-height:1.65}
         <button id="hlAll">Smazat všechna zvýraznění</button>
         <button id="hlBack">Vrátit předem daná zvýraznění</button>
       </div>
+      <p class="note"><b>Automatická záloha:</b> stránka si každý den sama uloží kopii všech tvých dat (posledních 7 dní) – kdyby se něco pokazilo, můžeš se k ní vrátit.</p>
+      <div class="actions"><select id="autoSel" aria-label="Automatická záloha"></select><button id="autoRes">Vrátit automatickou zálohu</button></div>
+      <div id="trvList"></div>
       <input type="file" id="fImport" accept=".json,application/json" hidden>
       <p class="note" id="nMsg" hidden></p>
       <div class="gen"><b>Obecné poznámky</b><textarea id="genNote" placeholder="Sem si piš cokoli – co se zeptat učitelky, co zopakovat, souvislosti…"></textarea><div class="nst" id="genSt"></div></div>
@@ -434,6 +437,7 @@ body{font-size:17px;line-height:1.65}
 <script src="psani.js"></script>
 <script src="predzvyrazneni.js"></script>
 <script src="zaloha.js"></script>
+<script src="trvalost.js"></script>
 <script>
 
 </script>
@@ -1107,6 +1111,13 @@ document.querySelectorAll("#main .era").forEach(sec=>{
     el.dataset.hk=c.contains("wd")?"wd"+v+":"+el.dataset.wkey.slice(2):c.contains("wd2")?"wdx"+v+":"+el.dataset.wkey.slice(2):c.contains("tx2")?"aux"+v+":"+au.dataset.au:au&&c.contains("tx")?"au"+(v||"2")+":"+au.dataset.au:sec.id+":"+(i++);
   });
 });
+// ochrana dat: když se obsah stránky změní, poznámky, psaní do textu a zvýraznění se přesunou s textem (nic se nesmaže) – viz trvalost.js
+// POZOR pro další úpravy: klíče (data-hk) už neverzovat (TXT_V3/TXT_V4 se nemění) – změny textu řeší trvalost.js samo.
+const HK_FAM=k=>{const m=k.match(/^(au|aux|wd|wdx)\d*:(.*)$/);return m&&m[1]+"|"+m[2];};
+Trvalost.run({id:"lit-hist",els:[...document.querySelectorAll("#main [data-hk]")],text:"lit-hist-text-v1",hl:"lit-hist-hl-v1",
+  alias:(k,cur)=>{const f=HK_FAM(k);return f?Object.keys(cur).find(c=>HK_FAM(c)===f)||null:null;},
+  notes:[{key:"lit-hist-notes-v1",valid:new Set([...document.querySelectorAll("[data-nk]")].map(e=>e.dataset.nk).concat(["gen:obecne"]))}],
+  keys:Zaloha.AUTO_KEYS});
 const HLKEY="lit-hist-hl-v1";
 let hls={};try{hls=JSON.parse(localStorage.getItem(HLKEY)||"{}")||{};}catch(e){}
 const storeHl=()=>{try{localStorage.setItem(HLKEY,JSON.stringify(hls));}catch(e){}};
@@ -1185,6 +1196,11 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!hlbar.hidden)hlHid
 if(PreHL.seed([...document.querySelectorAll("#main [data-hk]")],hls,"lit-hist-hl-seed-v1",el=>el.classList.contains("tx")?3:2))storeHl();
 const TE=TextEdit.init({key:"lit-hist-text-v1",els:[...document.querySelectorAll("#main [data-hk]")],btn:document.getElementById("psaniBtn"),
   onRevert:hlPaint,onStart:()=>{document.getElementById("mAll").click();hlHide();}});
+Trvalost.show({TE,list:document.getElementById("trvList"),
+  label:el=>{const a=el.closest("[data-au]");return a?a.dataset.au:(el.closest("section")?.querySelector("h2")?.textContent||"");},
+  reveal:el=>{const d=el.closest("details");if(d)d.open=true;const wl=el.closest(".wl");if(wl&&el.closest(".wmore")&&!wl.classList.contains("open"))wl.querySelector(".wmb")?.click();document.getElementById("drawer")?.classList.remove("open");}});
+(()=>{const sel=document.getElementById("autoSel"),sn=Trvalost.autoSnaps();sel.innerHTML=sn.length?sn.map((x,i)=>`<option value="${i}">${x.d}</option>`).reverse().join(""):"<option>zatím žádná</option>";
+  document.getElementById("autoRes").onclick=()=>{if(!sn.length)return;if(!confirm("Vrátit všechna data (poznámky, zvýraznění, úpravy, umím/neumím) do stavu ze dne "+sn[sel.value].d+"? Stránka se znovu načte."))return;Trvalost.restoreAuto(+sel.value);location.reload();};})();
 paintAllHl();
 document.getElementById("hlPre").onclick=()=>{if(!confirm("Smazat všechna předem daná zvýraznění? Tvoje vlastní zůstanou."))return;PreHL.removePresets(hls);storeHl();paintAllHl();msg("Předem daná zvýraznění smazána.");};
 document.getElementById("hlAll").onclick=()=>{if(!confirm("Smazat úplně všechna zvýraznění (i tvoje vlastní)?"))return;Object.keys(hls).forEach(k=>delete hls[k]);storeHl();paintAllHl();msg("Všechna zvýraznění smazána.");};

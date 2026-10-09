@@ -35,6 +35,15 @@ document.addEventListener("click",e=>{
   if(a){const id=a.getAttribute("href").slice(1);if(SECS.some(s=>s.id===id)){e.preventDefault();if(document.body.classList.contains("osa"))setView("main");if(qEl.value){qEl.value="";runSearch(false);}setSec(id,true);}}
 },true);
 
+// počet mých poznámek u každé epochy – aby bylo vidět, kde poznámky jsou, i když je zobrazená jen jedna epocha
+function noteBadges(){
+  const cnt={};Object.keys(notes).forEach(k=>{if(!notes[k])return;const e=noteEra(k);if(e)cnt[e]=(cnt[e]||0)+1;});
+  document.querySelectorAll("#ribbon a, #jump a").forEach(a=>{const id=a.getAttribute("href").slice(1);let b=a.querySelector(".nbadge");
+    if(!cnt[id]){if(b)b.remove();return;}if(!b){b=document.createElement("span");b.className="nbadge";a.appendChild(b);}b.textContent="📝 "+cnt[id];b.title=cnt[id]+" mých poznámek";});
+}
+const _rn=window.renderNotes;window.renderNotes=function(){_rn.apply(this,arguments);noteBadges();};
+noteBadges();
+
 /* ---------- 2) předem daná zvýraznění: defaultně vypnutá ---------- */
 const PKEY="lit-hist-pre-v1";
 window.PRE_ON=ls.get(PKEY)==="1";
@@ -121,14 +130,19 @@ function cardsStart(scope){
   if(!list.length){povIn.innerHTML=povTop("Karty")+`<p>Tady už všechno umíš. 🎉</p><button class="ghost" id="cSetup">Zpět</button>`;return;}
   C={scope,list,i:0,res:{ok:0,mid:0,no:0}};cardShow(false);
 }
+// na kartě tvoje verze textu (psaní do textu i tvoje zvýraznění) a tvoje poznámky
+const mine=a=>{const el=document.querySelector(`.au[data-au="${CSS.escape(a.n)}"] .tx`);return el?el.innerHTML:md(mainP(a.t));};
+const wmine=(a,w)=>{const el=document.querySelector(`.wd[data-wkey="${CSS.escape("w:"+a.n+"|"+w[0])}"]`);return el?el.innerHTML:(w[4]?md(mainP(w[4])):"");};
+const myNotes=a=>{const ks=["au:"+a.n,...a.w.map(w=>"w:"+a.n+"|"+w[0])].filter(k=>notes[k]);
+  return ks.length?`<div class="fnote"><b>📝 Moje poznámky</b>${ks.map(k=>`<div><small>${k.startsWith("w:")?"k dílu "+esc(k.split("|").slice(1).join("|")):"k autorovi"}</small>${esc(notes[k])}</div>`).join("")}</div>`:"";};
 function cardShow(open){
   const a=C.list[C.i],e=ERAS[a.ei];
-  const works=a.w.map(w=>`<li${w[3]?' class="k"':""}><i>${esc(w[0])}</i>${w[4]?` – ${md(mainP(w[4]))}`:""}</li>`).join("");
+  const works=a.w.map(w=>{const d=wmine(a,w);return `<li${w[3]?' class="k"':""}><i>${esc(w[0])}</i>${d?` – ${d}`:""}</li>`;}).join("");
   povIn.innerHTML=povTop("Karty k vybavování")+`
   <div class="meta"><span>${C.i+1} / ${C.list.length}</span><div class="tr"><div class="fl" style="width:${C.i/C.list.length*100}%"></div></div><span>${C.res.ok} ✓</span></div>
   <div class="fcard${open?" open":""}" style="--c:${e.c}">
     <div class="fk">${named(a)?"👤 Autor":"📖 Dílo"}</div><div class="fn">${esc(a.n)}</div>
-    ${open?`<div class="fd">${esc(a.d)} · <b style="color:${e.c}">${esc(e.name)}</b></div><div class="ft">${md(mainP(a.t))}</div>${a.w.length&&!(ANON.has(a.n)&&a.w.length===1)?`<ul class="fw">${works}</ul>`:""}`:`<div class="fhint">Vybav si: epocha / směr · hlavní díla · čím je typický</div>`}
+    ${open?`<div class="fd">${esc(a.d)} · <b style="color:${e.c}">${esc(e.name)}</b></div><div class="ft">${mine(a)}</div>${a.w.length&&!(ANON.has(a.n)&&a.w.length===1)?`<ul class="fw">${works}</ul>`:""}${myNotes(a)}`:`<div class="fhint">Vybav si: epocha / směr · hlavní díla · čím je typický</div>`}
   </div>
   ${open?`<div class="frate"><span>Jak jsi to věděla?</span><button class="fbtn" data-cr="no">✗ neumím</button><button class="fbtn" data-cr="mid">~ napůl</button><button class="fbtn" data-cr="ok">✓ umím</button></div>`:`<button class="pbtn go" id="cOpen">Odkrýt kartu</button>`}`;
   (document.getElementById("cOpen")||povIn.querySelector("[data-cr]")).focus();

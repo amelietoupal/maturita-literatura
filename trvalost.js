@@ -78,7 +78,8 @@
           if(tryK(k)||(o.alias&&tryK(o.alias(k,cur)||""))){(newH[tk]=newH[tk]||[]).push({...h,s:pos,e:pos+x.length});}
           else out.push({...h,x});
         });
-        if(out.length)rec.push({type:"hl",from:k,list:out,d:today(),hidden:1});
+        const mine=out.filter(h=>!h.pre); // předem daná zvýraznění nejsou tvoje – ta se jen tiše zahodí
+        if(mine.length)rec.push({type:"hl",from:k,to:free(k)?k:(o.alias?o.alias(k,cur):null),list:mine,d:today()});
       });
       save(o.hl,newH);
 
@@ -108,18 +109,22 @@
       };
       const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
       document.querySelectorAll(".trv").forEach(x=>x.remove());
+      const hlx=r=>r.type==="hl"?(r.list||[]).filter(h=>h.x&&h.x.trim()&&!h.pre):[];
+      const show1=r=>!r.hidden||hlx(r).length>0; // i dříve schovaná zvýraznění, u kterých známe zvýrazněná slova
+      const target=r=>{const k=r.to||r.from,hit=k&&document.querySelector(`[data-hk="${CSS.escape(k)}"]`);if(hit)return hit;const a=T.o&&T.o.alias&&r.from?T.o.alias(r.from,Object.fromEntries([...document.querySelectorAll("[data-hk]")].map(e=>[e.dataset.hk,1]))):null;return a?document.querySelector(`[data-hk="${CSS.escape(a)}"]`):null;};
       const box=(r,i)=>{
-        const el=r.to&&document.querySelector(`[data-hk="${CSS.escape(r.to)}"]`);
+        const el=r.type==="hl"?target(r):r.to&&document.querySelector(`[data-hk="${CSS.escape(r.to)}"]`);
         const d=document.createElement("div");d.className="trv";d.dataset.ri=i;
+        if(r.type==="hl"){d.innerHTML=`<b>🖍 Tvoje zvýraznění ze starší verze ${el?"tohoto textu":"textu"}</b> <span class="sm">– text se mezitím změnil a tato slova v něm už nejsou na stejném místě, tak je tu máš vypsaná:</span><div class="tt">${hlx(r).map(h=>`<mark class="uhl ${esc(h.c||"y")}">${esc(h.x)}</mark>`).join(" · ")}</div><button data-trv-del>Smazat</button>`;return [d,el];}
         d.innerHTML=r.type==="note"?`<b>🛟 Obnovená poznámka</b> <span class="sm">(její původní místo na stránce už neexistuje – ${esc(r.from)})</span><div class="tt">${esc(r.h)}</div><button data-trv-del>Smazat</button>`
           :`<b>🛟 Obnovená dřívější úprava${el?" tohoto textu":""}</b> <span class="sm">– psala jsi ji do starší verze stránky (obnoveno ${esc(r.d)}). <ins>Zeleně</ins> je to, co v současném textu není – nejspíš tvoje dopsané poznámky.</span><div class="tt">${diff(r.h,el?el.textContent:"")}</div>${el?`<button data-trv-use>Použít místo současného textu</button>`:""}<button data-trv-del>Smazat</button>`;
         return [d,el];
       };
-      T.rec.forEach((r,i)=>{if(r.hidden)return;const [d,el]=box(r,i);if(el)where(el).after(d);});
+      T.rec.forEach((r,i)=>{if(!show1(r))return;const [d,el]=box(r,i);if(el)where(el).after(d);});
       // seznam všech obnovených (i těch, které nemají místo na stránce)
       if(o.list){
         o.list.innerHTML="";
-        const vis=T.rec.map((r,i)=>[r,i]).filter(([r])=>!r.hidden);
+        const vis=T.rec.map((r,i)=>[r,i]).filter(([r])=>show1(r));
         if(vis.length){
           const p=document.createElement("p");p.className="note";
           p.innerHTML=`<b>🛟 Obnovené dřívější úpravy a poznámky (${vis.length})</b> – nic se neztratilo, jen to patřilo ke starší podobě stránky. Projdi je; co nepotřebuješ, smaž.`;

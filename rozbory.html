@@ -206,12 +206,12 @@ td.k{color:var(--muted);font-weight:600}
 
 <nav class="tabsnav" aria-label="Části webu"><div class="tabsnav-in">
   <a href="index.html">📚 Literatura <small>látka CERMAT</small></a>
-  <a href="rozbory.html" aria-current="page">📖 Moje četba <small>20 rozborů</small></a>
+  <a href="rozbory.html" aria-current="page">📖 Moje četba <small>21 rozborů</small></a>
 </div></nav>
 
 <header class="hero">
   <h1>Moje četba</h1>
-  <p>20 děl ze školního seznamu (jaro 2027), každé rozebrané podle listu <i>Analýza – zpracování</i>.</p>
+  <p>21 děl ze školního seznamu (jaro 2027), každé rozebrané podle listu <i>Analýza – zpracování</i>.</p>
   <div class="prog" id="prog"></div>
   <details class="help">
     <summary>❓ Jak to funguje</summary>
@@ -513,9 +513,9 @@ const VYP=r=>r.vyp.drama?"bez vypravěče (drama)":/ich/i.test(r.vyp.osoba[0])&&
 const POSTAVY={};ROZBORY.forEach(r=>r.postavy.forEach(p=>plainTxt(p[0]).split(" / ").forEach(n=>{n=n.replace(/\s*\(.*?\)/g,"").trim();
   if(!n||/^(Vypravěč|Lyrický|Přednášející|Postavy|Členové|Jára|Úředníci|Jeptišky|Manželé|Měsíc|Mloci)/.test(n)||r.t.toLowerCase().includes(n.toLowerCase()))return;(POSTAVY[n]=POSTAVY[n]||new Set()).add(r.no);})));
 // hlavní žánr každé knihy + žánry, které se s ním překrývají (ty se jako špatná odpověď nenabízí)
-const GEN={1:"komedie",2:"komedie",3:"komedie",4:"satirická báseň",5:"lyrickoepická báseň",6:"novela",7:"román",8:"román",9:"literatura faktu",10:"román",11:"román",12:"alegorická bajka",13:"novela",14:"utopické drama",15:"román",16:"novela",17:"román",18:"povídka",19:"komedie",20:"komedie"};
-const GEN_CLASH={novela:["povídka","román"],povídka:["novela"],román:["novela","literatura faktu"],"alegorická bajka":["novela","povídka"],"literatura faktu":["román"],"utopické drama":["komedie"]};
-const GEN_ALL=["komedie","satirická báseň","lyrickoepická báseň","novela","román","literatura faktu","alegorická bajka","utopické drama","povídka","tragédie","balada"];
+const GEN={1:"komedie",2:"komedie",3:"komedie",4:"satirická báseň",5:"lyrickoepická báseň",6:"novela",7:"román",8:"román",9:"literatura faktu",10:"román",11:"román",12:"alegorická bajka",13:"novela",14:"utopické drama",15:"román",16:"novela",17:"román",18:"povídka",19:"komedie",20:"komedie",21:"drama"};
+const GEN_CLASH={novela:["povídka","román"],povídka:["novela"],román:["novela","literatura faktu"],"alegorická bajka":["novela","povídka"],"literatura faktu":["román"],"utopické drama":["komedie"],drama:["komedie","utopické drama","tragédie"]};
+const GEN_ALL=["drama","komedie","satirická báseň","lyrickoepická báseň","novela","román","literatura faktu","alegorická bajka","utopické drama","povídka","tragédie","balada"];
 // skutečné místo hry (ne seminář) u cimrmanovských her
 const PLACE={19:"České nebe",20:"Arktida – cesta k severnímu pólu"};
 const STOP=new Set(["litera","česká","světo","stolet","próza","období","pol. 2","1. pol"]);
@@ -548,7 +548,7 @@ function cvScope(sc){
 }
 function cvSetup(){
   cvIn.innerHTML=cvTop("Procvičování četby")+`<p class="note">Otázky z tvých rozborů: autor, druh, žánr, vypravěč, místo a čas děje, směr a postavy. <b>Celé téma</b> projde všechno, spletené otázky se ti na konci vrátí.</p>
-  <label for="cvS">Z čeho</label><select id="cvS"><option value="all">Všech 20 knih</option><option value="weak">Knihy, co mi nejdou (napůl / neumím)</option><option value="none">Knihy, které jsem ještě neoznačila</option>
+  <label for="cvS">Z čeho</label><select id="cvS"><option value="all">Všech 21 knih</option><option value="weak">Knihy, co mi nejdou (napůl / neumím)</option><option value="none">Knihy, které jsem ještě neoznačila</option>
   <optgroup label="Jedna kniha">${ROZBORY.map(r=>`<option value="b${r.no}">${r.no}. ${esc(r.t)}</option>`).join("")}</optgroup></select>
   <label for="cvM">Jak</label><select id="cvM"></select><button class="go" id="cvGo">Začít</button>`;
   const S=document.getElementById("cvS"),M=document.getElementById("cvM");if(CR)S.value=CR.sc;
